@@ -1,4 +1,6 @@
 #import libraries
+import os
+import tempfile
 from tkinter import *
 import tkinter.ttk as ttk
 import tkinter.messagebox as tkMessageBox
@@ -112,12 +114,12 @@ def register():
     contact1=contact.get()
     price1=price.get()
     #applying empty validation
-    if name1=='' or car_model1==''or code1=='' or date1==''or contact1=='' or price1=='':
+    if name1=='' or code1=='' or date1==''or contact1=='' or price1=='':
         x=0
         # tkMessageBox.showinfo("Aviso","Preencha o campo vazio!!!")
     else:
         #execute query
-        conn.execute('INSERT INTO REGISTRATION (NAME,CAR_MODEL,CODE,DATE,CONTACT) \
+        conn.execute('INSERT INTO REGISTRATION (NAME,CODE,DATE,CONTACT,PRICE) \
               VALUES (?,?,?,?,?)',(name1,code1,date1,contact1,price1));
         conn.commit()
         tkMessageBox.showinfo("Messagem","Salva com sucesso")
@@ -125,19 +127,27 @@ def register():
         DisplayData()
         conn.close()
 def Print():
-    y=0
-def Reset():
-    #clear current data from table
-    tree.delete(*tree.get_children())
-    #refresh table data
-    DisplayData()
-    #clear search text
-    SEARCH.set("")
-    name.set("")
-    code.set("")
-    date.set("")
-    contact.set("")
-    price1.set("")
+        #open database
+    Database()
+    if not tree.selection():
+        tkMessageBox.showwarning("Aviso","Selecione a linha a ser impressa")
+    else:
+        result = tkMessageBox.askquestion('Confirm', 'Are you sure you want to delete this record?',
+                                          icon="warning")
+        if result == 'yes':
+            curItem = tree.focus()
+            contents = (tree.item(curItem))
+            selecteditem = contents['values']
+            tree.delete(curItem)
+            cursor=conn.execute("SELECT * FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            cursor.close()
+            conn.close()
+        #PRINT
+    q=str(fetch)
+    filename=tempfile.mktemp(".txt")
+    open (filename, "w"). write(q)
+    os.startfile(filename, "print")
 def Delete():
     #open database
     Database()
