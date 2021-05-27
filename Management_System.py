@@ -132,7 +132,7 @@ def Print():
     if not tree.selection():
         tkMessageBox.showwarning("Aviso","Selecione a linha a ser impressa")
     else:
-        result = tkMessageBox.askquestion('Confirm', 'Are you sure you want to delete this record?',
+        result = tkMessageBox.askquestion('Confirmar', 'Você quer imprimir este pedido?',
                                           icon="warning")
         if result == 'yes':
             curItem = tree.focus()
@@ -154,7 +154,7 @@ def Delete():
     if not tree.selection():
         tkMessageBox.showwarning("Aviso","Selecione a linha a ser apagada")
     else:
-        result = tkMessageBox.askquestion('Confirm', 'Are you sure you want to delete this record?',
+        result = tkMessageBox.askquestion('Confirmar', 'Você quer apagar este pedido?',
                                           icon="warning")
         if result == 'yes':
             curItem = tree.focus()
