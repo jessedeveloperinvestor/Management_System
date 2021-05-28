@@ -14,7 +14,7 @@ def Database():
     cursor = conn.cursor()
     #creating STUD_REGISTRATION table
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, CONTACT TEXT, PRICE TEXT)")
+        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT)")
 
 #defining function for creating GUI Layout
 def DisplayForm():
@@ -26,13 +26,14 @@ def DisplayForm():
     display_screen.title("Jesse Softwares                                                      https://relaxed-dijkstra-f2b25b.netlify.app")
     global tree
     global SEARCH
-    global name,code,date,contact,price
+    global name,code,date,contact,price,service
     SEARCH = StringVar()
     name = StringVar()
     code = StringVar()
     date = StringVar()
     contact = StringVar()
     price = StringVar()
+    service = StringVar()
     #creating frames for layout
     #topview frame for heading
     TopViewForm = Frame(display_screen, width=600, bd=1, relief=SOLID)
@@ -60,6 +61,8 @@ def DisplayForm():
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=contact).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Preço(R$) ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=price).pack(side=TOP, padx=10, fill=X)
+    Label(LFrom, text="Serviço ", font=("Arial", 12)).pack(side=TOP)
+    Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, fill=X)
     Button(LFrom,text="Salvar",font=("Arial", 10, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
     Label(LFrom, text="Pode-se inserir apenas placa,\ndata e preço, após cliente\nter sido cadastrado.\nE deve-se usar ponto ao invés de vírgula", font=("Arial", 8)).pack(side=TOP)
 
@@ -84,7 +87,7 @@ def DisplayForm():
    #setting scrollbar
     scrollbarx = Scrollbar(MidViewForm, orient=HORIZONTAL)
     scrollbary = Scrollbar(MidViewForm, orient=VERTICAL)
-    tree = ttk.Treeview(MidViewForm,columns=("Id", "Nome", "Placa","Data","Fone", "Preço(R$)"),
+    tree = ttk.Treeview(MidViewForm,columns=("Id", "Nome", "Placa","Data","Fone", "Preço(R$)", "Serviço"),
                         selectmode="extended", height=100, yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
     scrollbary.config(command=tree.yview)
     scrollbary.pack(side=RIGHT, fill=Y)
@@ -97,12 +100,14 @@ def DisplayForm():
     tree.heading('Data', text="Data", anchor=W)
     tree.heading('Fone', text="Fone", anchor=W)
     tree.heading('Preço(R$)', text="Preço(R$)", anchor=W)
+    tree.heading('Serviço', text="Serviço", anchor=W)
     #setting width of the columns
     tree.column('#0', stretch=NO, minwidth=0, width=0)
-    tree.column('#1', stretch=NO, minwidth=0, width=100)
-    tree.column('#2', stretch=NO, minwidth=0, width=150)
+    tree.column('#1', stretch=NO, minwidth=0, width=80)
+    tree.column('#2', stretch=NO, minwidth=0, width=110)
     tree.column('#3', stretch=NO, minwidth=0, width=80)
-    tree.column('#4', stretch=NO, minwidth=0, width=120)
+    tree.column('#4', stretch=NO, minwidth=0, width=90)
+    tree.column('#5', stretch=NO, minwidth=0, width=90)
     tree.pack()
     DisplayData()
 #function to insert data into database
@@ -114,9 +119,10 @@ def register():
     date1=date.get()
     contact1=contact.get()
     price1=price.get()
+    service1=service.get()
     #execute query
-    conn.execute('INSERT INTO REGISTRATION (NAME,CODE,DATE,CONTACT,PRICE) \
-          VALUES (?,?,?,?,?)',(name1,code1.upper(),date1,contact1,price1));
+    conn.execute('INSERT INTO REGISTRATION (NAME,CODE,DATE,CONTACT,PRICE, SERVICE) \
+          VALUES (?,?,?,?,?,?)',(name1,code1.upper(),date1,contact1,price1,service1));
     conn.commit()
     tkMessageBox.showinfo("Messagem","Salva com sucesso")
     #refresh table data
@@ -184,13 +190,22 @@ def Print():
             fct4=fct3.translate({ord(i): None for i in "("})
             hct5=fct4.translate({ord(i): None for i in ")"})
 
+            cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            gct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            gct2=gct1.translate({ord(i): None for i in "["})
+            gct3=gct2.translate({ord(i): None for i in "]"})
+            gct4=gct3.translate({ord(i): None for i in "("})
+            ict5=gct4.translate({ord(i): None for i in ")"})
+
             a1='Número de ordem:\n'+ct5
             a2='Nome:\n'+dct5
             a3='Placa:\n'+ect5
             a4='Data:\n'+fct5
             a5='Fone:\n'+gct5
             a6='Preço:\n'+hct5
-            content0=a1+a2+a3+a4+a5+a6+'\n\n\n\n\n\n\n\n\n\n\n\n'
+            a7='Serviço:\n'+ict5
+            content0=a1+a2+a3+a4+a5+a6+a7+'\n\n\n\n\n\n\n\n\n\n\n\n'
             content=content0.translate({ord(i): '\n' for i in ","})
             cursor.close()
             conn.close()
