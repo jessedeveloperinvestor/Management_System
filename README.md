@@ -1,2 +1,2 @@
 # management_system
-Mnagement System
+Management System
