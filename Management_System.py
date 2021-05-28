@@ -23,7 +23,7 @@ def DisplayForm():
     #setting width and height for window
     display_screen.geometry("1200x600")
     #setting title for window
-    display_screen.title("Jesse Softwares                                                             https://relaxed-dijkstra-f2b25b.netlify.app")
+    display_screen.title("Jesse Softwares                                                      https://relaxed-dijkstra-f2b25b.netlify.app")
     global tree
     global SEARCH
     global name,code,date,contact,price
@@ -52,7 +52,7 @@ def DisplayForm():
     #creating registration form in first left frame
     Label(LFrom, text="Nome  ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom,font=("Arial",10,"bold"),textvariable=name).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Placa ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Placa(sem traço) ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=code).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Data ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=date).pack(side=TOP, padx=10, fill=X)
@@ -61,9 +61,10 @@ def DisplayForm():
     Label(LFrom, text="Preço(R$) ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=price).pack(side=TOP, padx=10, fill=X)
     Button(LFrom,text="Salvar",font=("Arial", 10, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
+    Label(LFrom, text="Pode-se inserir apenas placa,\ndata e preço, após cliente\nter sido cadastrado.\nE deve-se usar ponto ao invés de vírgula", font=("Arial", 8)).pack(side=TOP)
 
     #creating search label and entry in second frame
-    lbl_txtsearch = Label(LeftViewForm, text="Insira o nome para pesquisar", font=('verdana', 10),bg="gray")
+    lbl_txtsearch = Label(LeftViewForm, text="Insira a PLACA para pesquisar", font=('verdana', 10),bg="gray")
     lbl_txtsearch.pack()
     #creating search entry
     search = Entry(LeftViewForm, textvariable=SEARCH, font=('verdana', 15), width=10)
@@ -113,19 +114,14 @@ def register():
     date1=date.get()
     contact1=contact.get()
     price1=price.get()
-    #applying empty validation
-    if name1=='' or code1=='' or date1==''or contact1=='' or price1=='':
-        x=0
-        # tkMessageBox.showinfo("Aviso","Preencha o campo vazio!!!")
-    else:
-        #execute query
-        conn.execute('INSERT INTO REGISTRATION (NAME,CODE,DATE,CONTACT,PRICE) \
-              VALUES (?,?,?,?,?)',(name1,code1,date1,contact1,price1));
-        conn.commit()
-        tkMessageBox.showinfo("Messagem","Salva com sucesso")
-        #refresh table data
-        DisplayData()
-        conn.close()
+    #execute query
+    conn.execute('INSERT INTO REGISTRATION (NAME,CODE,DATE,CONTACT,PRICE) \
+          VALUES (?,?,?,?,?)',(name1,code1.upper(),date1,contact1,price1));
+    conn.commit()
+    tkMessageBox.showinfo("Messagem","Salva com sucesso")
+    #refresh table data
+    DisplayData()
+    conn.close()
 def Print():
         #open database
     Database()
@@ -139,12 +135,67 @@ def Print():
             contents = (tree.item(curItem))
             selecteditem = contents['values']
             tree.delete(curItem)
-            cursor=conn.execute("SELECT * FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+
+            cursor=conn.execute("SELECT ID FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
+            ct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            ct2=ct1.translate({ord(i): None for i in "["})
+            ct3=ct2.translate({ord(i): None for i in "]"})
+            ct4=ct3.translate({ord(i): None for i in "("})
+            ct5=ct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT NAME FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            bct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            bct2=bct1.translate({ord(i): None for i in "["})
+            bct3=bct2.translate({ord(i): None for i in "]"})
+            bct4=bct3.translate({ord(i): None for i in "("})
+            dct5=bct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT CODE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            cct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            cct2=cct1.translate({ord(i): None for i in "["})
+            cct3=cct2.translate({ord(i): None for i in "]"})
+            cct4=cct3.translate({ord(i): None for i in "("})
+            ect5=cct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT DATE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            dct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            dct2=dct1.translate({ord(i): None for i in "["})
+            dct3=dct2.translate({ord(i): None for i in "]"})
+            dct4=dct3.translate({ord(i): None for i in "("})
+            fct5=dct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT CONTACT FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            ect1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            ect2=ect1.translate({ord(i): None for i in "["})
+            ect3=ect2.translate({ord(i): None for i in "]"})
+            ect4=ect3.translate({ord(i): None for i in "("})
+            gct5=ect4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            fct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            fct2=fct1.translate({ord(i): None for i in "["})
+            fct3=fct2.translate({ord(i): None for i in "]"})
+            fct4=fct3.translate({ord(i): None for i in "("})
+            hct5=fct4.translate({ord(i): None for i in ")"})
+
+            a1='Número de ordem:\n'+ct5
+            a2='Nome:\n'+dct5
+            a3='Placa:\n'+ect5
+            a4='Data:\n'+fct5
+            a5='Fone:\n'+gct5
+            a6='Preço:\n'+hct5
+            content0=a1+a2+a3+a4+a5+a6+'\n\n\n\n\n\n\n\n\n\n\n\n'
+            content=content0.translate({ord(i): '\n' for i in ","})
             cursor.close()
             conn.close()
-        #PRINT
-    q=str(fetch)
+    #PRINT
+    q='------------------------------------------------------------------\nRUBENS AMEXEIRA\n------------------------------------------------------------------\n\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'\n\nObrigado!\n\n\n------------------------------------------------------------------'
     filename=tempfile.mktemp(".txt")
     open (filename, "w"). write(q)
     os.startfile(filename, "print")
@@ -175,7 +226,7 @@ def SearchRecord():
         #clearing current display data
         tree.delete(*tree.get_children())
         #select query with where clause
-        cursor=conn.execute("SELECT * FROM REGISTRATION WHERE CODE LIKE ?", ('%' + str(SEARCH.get()) + '%',))
+        cursor=conn.execute("SELECT * FROM REGISTRATION WHERE CODE LIKE ?", ('%' + str(SEARCH.get().upper()) + '%',))
         #fetch all matching records
         fetch = cursor.fetchall()
         #loop for displaying all records into GUI
