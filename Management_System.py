@@ -67,7 +67,7 @@ def DisplayForm():
     Button(LFrom,text="Salvar tarefa",font=("Arial", 10, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
     Button(LFrom,text="Salvar",font=("Arial", 10, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
     Button(LFrom,text="Finalizar pedido",font=("Arial", 10, "bold"),command=reset).pack(side=TOP, padx=10,pady=5, fill=X)
-    Label(LFrom, text="Pode-se inserir apenas placa,\ndata e preço, após cliente\nter sido cadastrado.\n\nE deve-se usar ponto,\n ao invés de vírgula", font=("Arial", 8)).pack(side=TOP)
+    Label(LFrom, text="Pode-se inserir apenas placa,\ndata e preço, após cliente\nter sido cadastrado.\n\nE deve-se usar ponto,\n ao invés de vírgula.\n\nÉ preciso clicar em 'Salvar Tarefa'\npara salvar e para pular de linha\nna nota a ser impressa.\n\nClique em 'Finalizar Tarefa' após salvar um pedido.", font=("Arial", 8)).pack(side=TOP)
 
     #creating search label and entry in second frame
     lbl_txtsearch = Label(LeftViewForm, text="Insira a PLACA para pesquisar", font=('verdana', 10),bg="gray")
