@@ -21,7 +21,7 @@ def DisplayForm():
     #creating window
     display_screen = Tk()
     #setting width and height for window
-    display_screen.geometry("1200x600")
+    display_screen.geometry("1300x700")
     #setting title for window
     display_screen.title("Jesse Softwares                                                      https://relaxed-dijkstra-f2b25b.netlify.app")
     global tree
@@ -47,6 +47,7 @@ def DisplayForm():
     #mid frame for displaying students record
     MidViewForm = Frame(display_screen, width=600)
     MidViewForm.pack(side=RIGHT)
+
     #label for heading
     lbl_text = Label(TopViewForm, text="Rubens Amexeira", font=('verdana', 18), width=600,bg="#1C2833",fg="white")
     lbl_text.pack(fill=X)
@@ -62,9 +63,10 @@ def DisplayForm():
     Label(LFrom, text="Preço(R$) ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=price).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Serviço ", font=("Arial", 12)).pack(side=TOP)
-    Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, fill=X)
+    Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, pady=10, fill=X)
+    Button(LFrom,text="Próxima linha/serviço",font=("Arial", 10, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
     Button(LFrom,text="Salvar",font=("Arial", 10, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
-    Label(LFrom, text="Pode-se inserir apenas placa,\ndata e preço, após cliente\nter sido cadastrado.\nE deve-se usar ponto ao invés de vírgula", font=("Arial", 8)).pack(side=TOP)
+    Label(LFrom, text="Pode-se inserir apenas placa,\ndata e preço, após cliente\nter sido cadastrado.\n\nE deve-se usar ponto,\n ao invés de vírgula", font=("Arial", 8)).pack(side=TOP)
 
     #creating search label and entry in second frame
     lbl_txtsearch = Label(LeftViewForm, text="Insira a PLACA para pesquisar", font=('verdana', 10),bg="gray")
@@ -106,12 +108,24 @@ def DisplayForm():
     tree.column('#1', stretch=NO, minwidth=0, width=80)
     tree.column('#2', stretch=NO, minwidth=0, width=110)
     tree.column('#3', stretch=NO, minwidth=0, width=80)
-    tree.column('#4', stretch=NO, minwidth=0, width=90)
-    tree.column('#5', stretch=NO, minwidth=0, width=90)
+    tree.column('#4', stretch=NO, minwidth=0, width=50)
+    tree.column('#5', stretch=NO, minwidth=0, width=160)
     tree.pack()
     DisplayData()
+global s01
+s01=['']
 #function to insert data into database
+def enter():
+    global s1
+    stxt=service.get()
+    s0=stxt.split()
+    s01.append(s0)
+    s1=str(s01)+'\n'
 def register():
+    s2=s1.translate({ord(i): None for i in "["})
+    s3=s2.translate({ord(i): None for i in "]"})
+    s4=s3.translate({ord(i): None for i in ","})
+    services=s4
     Database()
     #getting form data
     name1=name.get()
@@ -119,10 +133,10 @@ def register():
     date1=date.get()
     contact1=contact.get()
     price1=price.get()
-    service1=service.get()
+    service1=services
     #execute query
-    conn.execute('INSERT INTO REGISTRATION (NAME,CODE,DATE,CONTACT,PRICE, SERVICE) \
-          VALUES (?,?,?,?,?,?)',(name1,code1.upper(),date1,contact1,price1,service1));
+    conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,CONTACT,PRICE, SERVICE)
+    VALUES (?,?,?,?,?,?)''',(name1,code1.upper(),date1,contact1,price1,service1))
     conn.commit()
     tkMessageBox.showinfo("Messagem","Salva com sucesso")
     #refresh table data
@@ -190,7 +204,7 @@ def Print():
             fct4=fct3.translate({ord(i): None for i in "("})
             hct5=fct4.translate({ord(i): None for i in ")"})
 
-            cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            cursor=conn.execute("SELECT SERVICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
             gct1=str(fetch).translate({ord(i): '\n' for i in "'"})
             gct2=gct1.translate({ord(i): None for i in "["})
@@ -210,10 +224,12 @@ def Print():
             cursor.close()
             conn.close()
     #PRINT
+    global q
     q='------------------------------------------------------------------\nRUBENS AMEXEIRA\n------------------------------------------------------------------\n\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'\n\nObrigado!\n\n\n------------------------------------------------------------------'
     filename=tempfile.mktemp(".txt")
     open (filename, "w"). write(q)
     os.startfile(filename, "print")
+    print(q)
 def Delete():
     #open database
     Database()
