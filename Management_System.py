@@ -233,7 +233,6 @@ def Print():
     filename=tempfile.mktemp(".txt")
     open (filename, "w"). write(q)
     os.startfile(filename, "print")
-    print(q)
 def Delete():
     #open database
     Database()
