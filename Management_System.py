@@ -64,8 +64,9 @@ def DisplayForm():
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=price).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Serviço ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, pady=10, fill=X)
-    Button(LFrom,text="Próxima linha/serviço",font=("Arial", 10, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
+    Button(LFrom,text="Salvar tarefa",font=("Arial", 10, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
     Button(LFrom,text="Salvar",font=("Arial", 10, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
+    Button(LFrom,text="Finalizar pedido",font=("Arial", 10, "bold"),command=reset).pack(side=TOP, padx=10,pady=5, fill=X)
     Label(LFrom, text="Pode-se inserir apenas placa,\ndata e preço, após cliente\nter sido cadastrado.\n\nE deve-se usar ponto,\n ao invés de vírgula", font=("Arial", 8)).pack(side=TOP)
 
     #creating search label and entry in second frame
@@ -142,6 +143,9 @@ def register():
     #refresh table data
     DisplayData()
     conn.close()
+def reset():
+    l=len(s01)
+    del s01[0:l]
 def Print():
         #open database
     Database()
