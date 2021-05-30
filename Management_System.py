@@ -49,7 +49,7 @@ def DisplayForm():
     MidViewForm.pack(side=RIGHT)
 
     #label for heading
-    lbl_text = Label(TopViewForm, text="Rubens Amexeira", font=('verdana', 18), width=600,bg="#1C2833",fg="white")
+    lbl_text = Label(TopViewForm, text="Management System", font=('verdana', 18), width=600,bg="#1C2833",fg="white")
     lbl_text.pack(fill=X)
     #creating registration form in first left frame
     Label(LFrom, text="Nome  ", font=("Arial", 12)).pack(side=TOP)
@@ -223,13 +223,13 @@ def Print():
             a5='Fone:\n'+gct5
             a6='Preço:\n'+hct5
             a7='Serviço:\n'+ict5
-            content0=a1+a2+a3+a4+a5+a6+a7+'\n\n\n\n\n\n\n\n\n\n\n\n'
+            content0=a1+a2+a3+a4+a5+a6+a7
             content=content0.translate({ord(i): '\n' for i in ","})
             cursor.close()
             conn.close()
     #PRINT
     global q
-    q='------------------------------------------------------------------\nRUBENS AMEXEIRA\n------------------------------------------------------------------\n\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'\n\nObrigado!\n\n\n------------------------------------------------------------------'
+    q='------------------------------------------------------------------\nRUBENS AMEXEIRA\n------------------------------------------------------------------\n\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'\n\nObrigado!\n------------------------------------------------------------------'
     filename=tempfile.mktemp(".txt")
     open (filename, "w"). write(q)
     os.startfile(filename, "print")
