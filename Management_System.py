@@ -25,7 +25,7 @@ def DisplayForm():
     #setting width and height for window
     display_screen.geometry("1350x715")
     #setting title for window
-    display_screen.title("Jesse Softwares                                                      https://relaxed-dijkstra-f2b25b.netlify.app")
+    display_screen.title("Jesse Leite Softwares                                                      https://relaxed-dijkstra-f2b25b.netlify.app")
     global tree
     global SEARCH
     global name,code,date,date2,mec,contact,price,service
@@ -56,27 +56,26 @@ def DisplayForm():
     lbl_text = Label(TopViewForm, text="Auto Center Oliveira", font=('verdana', 25), width=600,bg="#1C2833",fg="white")
     lbl_text.pack(fill=X)
     #creating registration form in first left frame
-    Label(LFrom, text="Nome  ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Nome  ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom,font=("Arial",10,"bold"),textvariable=name).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Placa(sem traço) ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Placa(sem traço) ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=code).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Data de Entrada ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Data de Entrada ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=date).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Data de Saída ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Data de Saída ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=date2).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Mecânico ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Mecânico ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=mec).pack(side=TOP, padx=10, fill=X)
-
-    Label(LFrom, text="Fone ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Fone ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=contact).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Preço(R$) ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Preço(R$) ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=price).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Serviço ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Serviço ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, pady=10, fill=X)
-    Button(LFrom,text="Salvar tarefa",font=("Arial", 10, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
-    Button(LFrom,text="Salvar",font=("Arial", 10, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
-    Button(LFrom,text="Finalizar pedido",font=("Arial", 10, "bold"),command=reset).pack(side=TOP, padx=10,pady=5, fill=X)
-    Label(LFrom, text="Pode-se inserir apenas placa,\ndata e preço, após cliente\nter sido cadastrado.\n\nE deve-se usar ponto,\n ao invés de vírgula.\n\nÉ preciso clicar em 'Salvar Tarefa'\npara salvar e para pular de linha\nna nota a ser impressa.\n\nClique em 'Finalizar Tarefa' após salvar um pedido.", font=("Arial", 8)).pack(side=TOP)
+    Button(LFrom,text="Salvar tarefa",font=("Arial", 12, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
+    Button(LFrom,text="Salvar",font=("Arial", 12, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
+    Button(LFrom,text="Finalizar pedido",font=("Arial", 12, "bold"),command=reset).pack(side=TOP, padx=10,pady=5, fill=X)
+    Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\n\nDeve-se usar ponto,\n ao invés de vírgula.\nClique em 'Salvar Tarefa' e 'Salvar'.\npara salvar e para pular de linha\nna nota a ser impressa.", font=("Arial", 7)).pack(side=TOP)
 
     #creating search label and entry in second frame
     lbl_txtsearch = Label(LeftViewForm, text="Insira a PLACA\npara pesquisar", font=('verdana', 10),bg="gray")
@@ -269,9 +268,9 @@ def Print():
             a1='Número de ordem:\n'+ct5
             a2='Nome:\n'+dct5
             a3='Placa:\n'+ect5
-            a4='Data:\n'+fct5
-            a42='Data:\n'+fct52
-            a43='Data:\n'+mfct5
+            a4='Data de Entrada:\n'+fct5
+            a42='Data de Saída:\n'+fct52
+            a43='Mecânico:\n'+mfct5
             a5='Fone:\n'+gct5
             a6='Preço:\n'+hct5
             a7='Serviço:\n'+ict5
