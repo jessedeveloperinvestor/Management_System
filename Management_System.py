@@ -1,10 +1,12 @@
 #import libraries
 import os
 import tempfile
+import tkinter
 from tkinter import *
 import tkinter.ttk as ttk
 import tkinter.messagebox as tkMessageBox
 import sqlite3
+from PIL import Image, ImageTk
 
 #function to define database
 def Database():
@@ -14,27 +16,29 @@ def Database():
     cursor = conn.cursor()
     #creating STUD_REGISTRATION table
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT)")
+        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, DATE2 TEXT, MEC TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT)")
 
 #defining function for creating GUI Layout
 def DisplayForm():
     #creating window
     display_screen = Tk()
     #setting width and height for window
-    display_screen.geometry("1300x700")
+    display_screen.geometry("1350x715")
     #setting title for window
     display_screen.title("Jesse Softwares                                                      https://relaxed-dijkstra-f2b25b.netlify.app")
     global tree
     global SEARCH
-    global name,code,date,contact,price,service
+    global name,code,date,date2,mec,contact,price,service
     SEARCH = StringVar()
     name = StringVar()
     code = StringVar()
     date = StringVar()
+    date2 = StringVar()
+    mec = StringVar()
     contact = StringVar()
     price = StringVar()
     service = StringVar()
-    #creating frames for layout
+
     #topview frame for heading
     TopViewForm = Frame(display_screen, width=600, bd=1, relief=SOLID)
     TopViewForm.pack(side=TOP, fill=X)
@@ -49,15 +53,20 @@ def DisplayForm():
     MidViewForm.pack(side=RIGHT)
 
     #label for heading
-    lbl_text = Label(TopViewForm, text="Management System", font=('verdana', 18), width=600,bg="#1C2833",fg="white")
+    lbl_text = Label(TopViewForm, text="Auto Center Oliveira", font=('verdana', 25), width=600,bg="#1C2833",fg="white")
     lbl_text.pack(fill=X)
     #creating registration form in first left frame
     Label(LFrom, text="Nome  ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom,font=("Arial",10,"bold"),textvariable=name).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Placa(sem traço) ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=code).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Data ", font=("Arial", 12)).pack(side=TOP)
+    Label(LFrom, text="Data de Entrada ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=date).pack(side=TOP, padx=10, fill=X)
+    Label(LFrom, text="Data de Saída ", font=("Arial", 12)).pack(side=TOP)
+    Entry(LFrom, font=("Arial", 10, "bold"),textvariable=date2).pack(side=TOP, padx=10, fill=X)
+    Label(LFrom, text="Mecânico ", font=("Arial", 12)).pack(side=TOP)
+    Entry(LFrom, font=("Arial", 10, "bold"),textvariable=mec).pack(side=TOP, padx=10, fill=X)
+
     Label(LFrom, text="Fone ", font=("Arial", 12)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=contact).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Preço(R$) ", font=("Arial", 12)).pack(side=TOP)
@@ -70,13 +79,23 @@ def DisplayForm():
     Label(LFrom, text="Pode-se inserir apenas placa,\ndata e preço, após cliente\nter sido cadastrado.\n\nE deve-se usar ponto,\n ao invés de vírgula.\n\nÉ preciso clicar em 'Salvar Tarefa'\npara salvar e para pular de linha\nna nota a ser impressa.\n\nClique em 'Finalizar Tarefa' após salvar um pedido.", font=("Arial", 8)).pack(side=TOP)
 
     #creating search label and entry in second frame
-    lbl_txtsearch = Label(LeftViewForm, text="Insira a PLACA para pesquisar", font=('verdana', 10),bg="gray")
+    lbl_txtsearch = Label(LeftViewForm, text="Insira a PLACA\npara pesquisar", font=('verdana', 10),bg="gray")
     lbl_txtsearch.pack()
     #creating search entry
     search = Entry(LeftViewForm, textvariable=SEARCH, font=('verdana', 15), width=10)
     search.pack(side=TOP, padx=10, fill=X)
     #creating search button
     btn_search = Button(LeftViewForm, text="Pesquisar", command=SearchRecord)
+    btn_search.pack(side=TOP, padx=10, pady=10, fill=X)
+
+    #creating search label and entry in second frame
+    lbl_txtsearch = Label(LeftViewForm, text="Insira O Número de\nPedido para pesquisar", font=('verdana', 10),bg="gray")
+    lbl_txtsearch.pack()
+    #creating search entry
+    search = Entry(LeftViewForm, textvariable=SEARCH, font=('verdana', 15), width=10)
+    search.pack(side=TOP, padx=10, fill=X)
+    #creating search button
+    btn_search = Button(LeftViewForm, text="Pesquisar", command=SearchRecord2)
     btn_search.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating view button
     btn_view = Button(LeftViewForm, text="Ver tudo", command=DisplayData)
@@ -90,29 +109,42 @@ def DisplayForm():
    #setting scrollbar
     scrollbarx = Scrollbar(MidViewForm, orient=HORIZONTAL)
     scrollbary = Scrollbar(MidViewForm, orient=VERTICAL)
-    tree = ttk.Treeview(MidViewForm,columns=("Id", "Nome", "Placa","Data","Fone", "Preço(R$)", "Serviço"),
+    tree = ttk.Treeview(MidViewForm,columns=("Id", "Nome", "Placa","Data de Entrada","Data de Saída","Mecânico","Fone", "Preço(R$)", "Serviço"),
                         selectmode="extended", height=100, yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
     scrollbary.config(command=tree.yview)
     scrollbary.pack(side=RIGHT, fill=Y)
     scrollbarx.config(command=tree.xview)
     scrollbarx.pack(side=BOTTOM, fill=X)
     #setting headings for the columns
-    tree.heading('Id', text="Id", anchor=W)
+    tree.heading('Id', text="Número de Pedido", anchor=W)
     tree.heading('Nome', text="Nome", anchor=W)
     tree.heading('Placa', text="Placa", anchor=W)
-    tree.heading('Data', text="Data", anchor=W)
+    tree.heading('Data de Entrada', text="Data de Entrada", anchor=W)
+    tree.heading('Data de Saída', text="Data de Saída", anchor=W)
+    tree.heading('Mecânico', text="Mecânico", anchor=W)
     tree.heading('Fone', text="Fone", anchor=W)
     tree.heading('Preço(R$)', text="Preço(R$)", anchor=W)
     tree.heading('Serviço', text="Serviço", anchor=W)
     #setting width of the columns
     tree.column('#0', stretch=NO, minwidth=0, width=0)
-    tree.column('#1', stretch=NO, minwidth=0, width=80)
-    tree.column('#2', stretch=NO, minwidth=0, width=110)
+    tree.column('#1', stretch=NO, minwidth=0, width=90)
+    tree.column('#2', stretch=NO, minwidth=0, width=70)
     tree.column('#3', stretch=NO, minwidth=0, width=80)
-    tree.column('#4', stretch=NO, minwidth=0, width=50)
-    tree.column('#5', stretch=NO, minwidth=0, width=160)
+    tree.column('#4', stretch=NO, minwidth=0, width=80)
+    tree.column('#5', stretch=NO, minwidth=0, width=70)
+    tree.column('#6', stretch=NO, minwidth=0, width=70)
+    tree.column('#7', stretch=NO, minwidth=0, width=70)
     tree.pack()
     DisplayData()
+
+#IMAGE
+    image0 = Image.open("AO.png")
+    image1 = image0.resize((43, 43), Image.ANTIALIAS)
+    test = ImageTk.PhotoImage(image1)
+    label1 = tkinter.Label(image=test)
+    label1.image = test
+    label1.place(x=412, y=0.45)
+
 global s01
 s01=['']
 #function to insert data into database
@@ -132,12 +164,14 @@ def register():
     name1=name.get()
     code1=code.get()
     date1=date.get()
+    date21=date2.get()
+    mec1=mec.get()
     contact1=contact.get()
     price1=price.get()
     service1=services
     #execute query
-    conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,CONTACT,PRICE, SERVICE)
-    VALUES (?,?,?,?,?,?)''',(name1,code1.upper(),date1,contact1,price1,service1))
+    conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,DATE2,MEC,CONTACT,PRICE, SERVICE)
+    VALUES (?,?,?,?,?,?,?,?)''',(name1,code1.upper(),date1,date21,mec1,contact1,price1,service1))
     conn.commit()
     tkMessageBox.showinfo("Messagem","Salva com sucesso")
     #refresh table data
@@ -192,6 +226,22 @@ def Print():
             dct4=dct3.translate({ord(i): None for i in "("})
             fct5=dct4.translate({ord(i): None for i in ")"})
 
+            cursor=conn.execute("SELECT DATE2 FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            dct12=str(fetch).translate({ord(i): '\n' for i in "'"})
+            dct22=dct12.translate({ord(i): None for i in "["})
+            dct32=dct22.translate({ord(i): None for i in "]"})
+            dct42=dct32.translate({ord(i): None for i in "("})
+            fct52=dct42.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT MEC FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            mdct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            mdct2=mdct1.translate({ord(i): None for i in "["})
+            mdct3=mdct2.translate({ord(i): None for i in "]"})
+            mdct4=mdct3.translate({ord(i): None for i in "("})
+            mfct5=mdct4.translate({ord(i): None for i in ")"})
+
             cursor=conn.execute("SELECT CONTACT FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
             ect1=str(fetch).translate({ord(i): '\n' for i in "'"})
@@ -220,16 +270,18 @@ def Print():
             a2='Nome:\n'+dct5
             a3='Placa:\n'+ect5
             a4='Data:\n'+fct5
+            a42='Data:\n'+fct52
+            a43='Data:\n'+mfct5
             a5='Fone:\n'+gct5
             a6='Preço:\n'+hct5
             a7='Serviço:\n'+ict5
-            content0=a1+a2+a3+a4+a5+a6+a7
+            content0=a1+a2+a3+a4+a42+a43+a5+a6+a7
             content=content0.translate({ord(i): '\n' for i in ","})
             cursor.close()
             conn.close()
     #PRINT
     global q
-    q='------------------------------------------------------------------\nRUBENS AMEXEIRA\n------------------------------------------------------------------\n\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'\n\nObrigado!\n------------------------------------------------------------------'
+    q='------------------------------------------------------------------\nRUBENS AMEXEIRA\n------------------------------------------------------------------\n\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'\n\nObrigado!------------------------------------------------------------------'
     filename=tempfile.mktemp(".txt")
     open (filename, "w"). write(q)
     os.startfile(filename, "print")
@@ -261,6 +313,23 @@ def SearchRecord():
         tree.delete(*tree.get_children())
         #select query with where clause
         cursor=conn.execute("SELECT * FROM REGISTRATION WHERE CODE LIKE ?", ('%' + str(SEARCH.get().upper()) + '%',))
+        #fetch all matching records
+        fetch = cursor.fetchall()
+        #loop for displaying all records into GUI
+        for data in fetch:
+            tree.insert('', 'end', values=(data))
+        cursor.close()
+        conn.close()
+#function to search data
+def SearchRecord2():
+    #open database
+    Database()
+    #checking search text is empty or not
+    if SEARCH.get() != "":
+        #clearing current display data
+        tree.delete(*tree.get_children())
+        #select query with where clause
+        cursor=conn.execute("SELECT * FROM REGISTRATION WHERE ID LIKE ?", ('%' + str(SEARCH.get().upper()) + '%',))
         #fetch all matching records
         fetch = cursor.fetchall()
         #loop for displaying all records into GUI
