@@ -74,8 +74,7 @@ def DisplayForm():
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, pady=10, fill=X)
     Button(LFrom,text="Salvar tarefa",font=("Arial", 12, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
     Button(LFrom,text="Salvar",font=("Arial", 12, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
-    Button(LFrom,text="Finalizar pedido",font=("Arial", 12, "bold"),command=reset).pack(side=TOP, padx=10,pady=5, fill=X)
-    Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\n\nDeve-se usar ponto,\n ao invés de vírgula.\nClique em 'Salvar Tarefa' e 'Salvar'.\npara salvar e para pular de linha\nna nota a ser impressa.", font=("Arial", 7)).pack(side=TOP)
+    Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\nDeve-se usar ponto,\n ao invés de vírgula.\nClique em 'Salvar Tarefa' e 'Salvar'.\npara salvar e para pular de linha\nna nota a ser impressa. Pode-se atualizar\npreço e adiconar serviços, para tal clique\nem 'Salvar Tarefa' e em 'Atualizar'", font=("Arial", 7)).pack(side=TOP)
 
     #creating search label and entry in second frame
     lbl_txtsearch = Label(LeftViewForm, text="Pesquise aqui", font=('verdana', 10),bg="gray")
@@ -97,6 +96,9 @@ def DisplayForm():
     btn_reset.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating delete button
     btn_delete = Button(LeftViewForm, text="Apagar", command=Delete)
+    btn_delete.pack(side=TOP, padx=10, pady=10, fill=X)
+    #creating update button
+    btn_delete = Button(LeftViewForm, text="Atualizar", command=Update)
     btn_delete.pack(side=TOP, padx=10, pady=10, fill=X)
    #setting scrollbar
     scrollbarx = Scrollbar(MidViewForm, orient=HORIZONTAL)
@@ -141,11 +143,13 @@ global s01
 s01=['']
 #function to insert data into database
 def enter():
+    l=len(s01)
+    del s01[0:l]
     global s1
-    stxt=service.get()
+    stxt=service.get()+'|'
     s0=stxt.split()
     s01.append(s0)
-    s1=str(s01)+'\n'
+    s1=str(s01)
 def register():
     s2=s1.translate({ord(i): None for i in "["})
     s3=s2.translate({ord(i): None for i in "]"})
@@ -169,9 +173,6 @@ def register():
     #refresh table data
     DisplayData()
     conn.close()
-def reset():
-    l=len(s01)
-    del s01[0:l]
 def Print():
         #open database
     Database()
@@ -188,7 +189,7 @@ def Print():
 
             cursor=conn.execute("SELECT ID FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            ct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            ct1=str(fetch).translate({ord(i): None for i in "'"})
             ct2=ct1.translate({ord(i): None for i in "["})
             ct3=ct2.translate({ord(i): None for i in "]"})
             ct4=ct3.translate({ord(i): None for i in "("})
@@ -196,7 +197,7 @@ def Print():
 
             cursor=conn.execute("SELECT NAME FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            bct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            bct1=str(fetch).translate({ord(i): None for i in "'"})
             bct2=bct1.translate({ord(i): None for i in "["})
             bct3=bct2.translate({ord(i): None for i in "]"})
             bct4=bct3.translate({ord(i): None for i in "("})
@@ -204,7 +205,7 @@ def Print():
 
             cursor=conn.execute("SELECT CODE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            cct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            cct1=str(fetch).translate({ord(i): None for i in "'"})
             cct2=cct1.translate({ord(i): None for i in "["})
             cct3=cct2.translate({ord(i): None for i in "]"})
             cct4=cct3.translate({ord(i): None for i in "("})
@@ -212,7 +213,7 @@ def Print():
 
             cursor=conn.execute("SELECT DATE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            dct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            dct1=str(fetch).translate({ord(i): None for i in "'"})
             dct2=dct1.translate({ord(i): None for i in "["})
             dct3=dct2.translate({ord(i): None for i in "]"})
             dct4=dct3.translate({ord(i): None for i in "("})
@@ -220,7 +221,7 @@ def Print():
 
             cursor=conn.execute("SELECT DATE2 FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            dct12=str(fetch).translate({ord(i): '\n' for i in "'"})
+            dct12=str(fetch).translate({ord(i): None for i in "'"})
             dct22=dct12.translate({ord(i): None for i in "["})
             dct32=dct22.translate({ord(i): None for i in "]"})
             dct42=dct32.translate({ord(i): None for i in "("})
@@ -228,7 +229,7 @@ def Print():
 
             cursor=conn.execute("SELECT MEC FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            mdct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            mdct1=str(fetch).translate({ord(i): None for i in "'"})
             mdct2=mdct1.translate({ord(i): None for i in "["})
             mdct3=mdct2.translate({ord(i): None for i in "]"})
             mdct4=mdct3.translate({ord(i): None for i in "("})
@@ -236,7 +237,7 @@ def Print():
 
             cursor=conn.execute("SELECT CONTACT FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            ect1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            ect1=str(fetch).translate({ord(i): None for i in "'"})
             ect2=ect1.translate({ord(i): None for i in "["})
             ect3=ect2.translate({ord(i): None for i in "]"})
             ect4=ect3.translate({ord(i): None for i in "("})
@@ -244,7 +245,7 @@ def Print():
 
             cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            fct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            fct1=str(fetch).translate({ord(i): None for i in "'"})
             fct2=fct1.translate({ord(i): None for i in "["})
             fct3=fct2.translate({ord(i): None for i in "]"})
             fct4=fct3.translate({ord(i): None for i in "("})
@@ -252,11 +253,12 @@ def Print():
 
             cursor=conn.execute("SELECT SERVICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            gct1=str(fetch).translate({ord(i): '\n' for i in "'"})
+            gct1=str(fetch).translate({ord(i): None for i in "'"})
             gct2=gct1.translate({ord(i): None for i in "["})
             gct3=gct2.translate({ord(i): None for i in "]"})
             gct4=gct3.translate({ord(i): None for i in "("})
-            ict5=gct4.translate({ord(i): None for i in ")"})
+            ictx=gct4.translate({ord(i): None for i in ")"})
+            ict5=ictx.translate({ord(i): None for i in '"'})
 
             a1='Número de ordem: '+ct5
             a2='Nome: '+dct5
@@ -266,31 +268,169 @@ def Print():
             a43='Mecânico: '+mfct5
             a5='Fone: '+gct5
             a6='Preço: '+hct5
-            a7='Serviço: '+ict5
+            a7='Serviço(s): '+ict5
             content0=a1+a2+a3+a4+a42+a43+a5+a7+a6
             content=content0.translate({ord(i): '\n' for i in ","})
             cursor.close()
             conn.close()
     #PRINT
     global q
-    q='------------------------------------------------------------------\nAUTO CENTER OLIVEIRA\n------------------------------------------------------------------\n\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'\n------------------------------------------------------------------'
+    q='------------------------------------------------------------------\nAUTO CENTER OLIVEIRA\n------------------------------------------------------------------\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'------------------------------------------------------------------'
     filename=tempfile.mktemp(".txt")
     open (filename, "w"). write(q)
     os.startfile(filename, "print")
 def Delete():
     #open database
     Database()
+    result='yes'
+    if result == 'yes':
+        curItem = tree.focus()
+        contents = (tree.item(curItem))
+        selecteditem = contents['values']
+        tree.delete(curItem)
+        cursor=conn.execute("DELETE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+        conn.commit()
+        cursor.close()
+        conn.close()
+def Update():
+    #TELL TO SELECT ROW
     if not tree.selection():
-        tkMessageBox.showwarning("Aviso","Selecione a linha a ser apagada")
+        tkMessageBox.showwarning("Aviso","Selecione a linha a ser atualizada")
     else:
-        result = tkMessageBox.askquestion('Confirmar', 'Você quer apagar este pedido?',
+        result = tkMessageBox.askquestion('Confirmar', 'Você quer atualizar este pedido?\nO número de pedido será modificado',
+                                          icon="warning")
+        if result == 'yes':
+            #READ DATABASE
+            Database()
+            curItem = tree.focus()
+            contents = (tree.item(curItem))
+            selecteditem = contents['values']
+            tree.delete(curItem)
+
+            cursor=conn.execute("SELECT ID FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            ct1=str(fetch).translate({ord(i): None for i in "'"})
+            ct2=ct1.translate({ord(i): None for i in "["})
+            ct3=ct2.translate({ord(i): None for i in "]"})
+            ct4=ct3.translate({ord(i): None for i in "("})
+            ct5=ct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT NAME FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            bct1=str(fetch).translate({ord(i): None for i in "'"})
+            bct2=bct1.translate({ord(i): None for i in "["})
+            bct3=bct2.translate({ord(i): None for i in "]"})
+            bct4=bct3.translate({ord(i): None for i in "("})
+            dct5=bct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT CODE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            cct1=str(fetch).translate({ord(i): None for i in "'"})
+            cct2=cct1.translate({ord(i): None for i in "["})
+            cct3=cct2.translate({ord(i): None for i in "]"})
+            cct4=cct3.translate({ord(i): None for i in "("})
+            ect5=cct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT DATE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            dct1=str(fetch).translate({ord(i): None for i in "'"})
+            dct2=dct1.translate({ord(i): None for i in "["})
+            dct3=dct2.translate({ord(i): None for i in "]"})
+            dct4=dct3.translate({ord(i): None for i in "("})
+            fct5=dct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT DATE2 FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            dct12=str(fetch).translate({ord(i): None for i in "'"})
+            dct22=dct12.translate({ord(i): None for i in "["})
+            dct32=dct22.translate({ord(i): None for i in "]"})
+            dct42=dct32.translate({ord(i): None for i in "("})
+            fct52=dct42.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT MEC FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            mdct1=str(fetch).translate({ord(i): None for i in "'"})
+            mdct2=mdct1.translate({ord(i): None for i in "["})
+            mdct3=mdct2.translate({ord(i): None for i in "]"})
+            mdct4=mdct3.translate({ord(i): None for i in "("})
+            mfct5=mdct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT CONTACT FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            ect1=str(fetch).translate({ord(i): None for i in "'"})
+            ect2=ect1.translate({ord(i): None for i in "["})
+            ect3=ect2.translate({ord(i): None for i in "]"})
+            ect4=ect3.translate({ord(i): None for i in "("})
+            gct5=ect4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            fct1=str(fetch).translate({ord(i): None for i in "'"})
+            fct2=fct1.translate({ord(i): None for i in "["})
+            fct3=fct2.translate({ord(i): None for i in "]"})
+            fct4=fct3.translate({ord(i): None for i in "("})
+            hct5=fct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT SERVICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            gct1=str(fetch).translate({ord(i): None for i in "'"})
+            gct2=gct1.translate({ord(i): None for i in "["})
+            gct3=gct2.translate({ord(i): None for i in "]"})
+            gct4=gct3.translate({ord(i): None for i in "("})
+            ictx=gct4.translate({ord(i): None for i in ")"})
+            ict5=ictx.translate({ord(i): None for i in '"'})
+        #remove ,
+            ct5=ct5.translate({ord(i): None for i in ','})
+            xct5=ct5.translate({ord(i): None for i in ' '})
+            global yct5
+            yct5=int(xct5)
+            dct5=dct5.translate({ord(i): None for i in ','})
+            ect5=ect5.translate({ord(i): None for i in ','})
+            fct5=fct5.translate({ord(i): None for i in ','})
+            fct52=fct52.translate({ord(i): None for i in ','})
+            mfct5=mfct5.translate({ord(i): None for i in ','})
+            gct5=gct5.translate({ord(i): None for i in ','})
+            hct5=hct5.translate({ord(i): None for i in ','})
+            ict5=ict5.translate({ord(i): None for i in ','})
+            ct5=ct5.translate({ord(i): None for i in ','})
+        cursor.close()
+        conn.close()
+
+        #INSERT DATA IN ROW
+        global s01
+        s01=['']
+        global s1
+        stxt=service.get()+'|'
+        s0=stxt.split()
+        s01.append(ict5)
+        s01.append(s0)
+        s1=str(s01)
+        s2=s1.translate({ord(i): None for i in "["})
+        s3=s2.translate({ord(i): None for i in "]"})
+        s4=s3.translate({ord(i): None for i in ","})
+        services=s4
+        Database()
+        #getting form data
+        price1=price.get()
+        service1=services
+        #execute query
+        conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,DATE2,MEC,CONTACT,PRICE,SERVICE)
+        VALUES (?,?,?,?,?,?,?,?)''',(dct5,ect5.upper(),fct5,fct52,mfct5,gct5,price1,service1))
+        conn.commit()
+        tkMessageBox.showinfo("Messagem","Salva com sucesso\ncom novo Número de Pedido")
+        #refresh table data
+        DisplayData()
+
+        #DELETE OLD ROW
+        result = tkMessageBox.askquestion('Confirmar', 'Concluir atualização?',
                                           icon="warning")
         if result == 'yes':
             curItem = tree.focus()
             contents = (tree.item(curItem))
             selecteditem = contents['values']
-            tree.delete(curItem)
-            cursor=conn.execute("DELETE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            # tree.delete(curItem)
+            Database()
+            cursor=conn.execute("DELETE FROM REGISTRATION WHERE ID = %d" % yct5)
             conn.commit()
             cursor.close()
             conn.close()
