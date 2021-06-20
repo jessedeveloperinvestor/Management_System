@@ -77,7 +77,7 @@ def DisplayForm():
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, pady=10, fill=X)
     Button(LFrom,text="Salvar tarefa",font=("Arial", 12, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
     Button(LFrom,text="SALVAR TUDO",font=("Arial", 12, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
-    Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\nDeve-se usar ponto,\n ao invés de vírgula.\nClique em 'Salvar Tarefa' e 'Salvar'.\npara salvar e para pular de linha\nna nota a ser impressa. Pode-se atualizar\npreço e adiconar serviços, para tal clique\nem 'Salvar Tarefa' e em 'Atualizar'", font=("Arial", 7)).pack(side=TOP)
+    Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\nDeve-se usar ponto,\n ao invés de vírgula.\nClique em 'Salvar Tarefa' e 'Salvar'.\npara salvar e para pular de linha\nna nota a ser impressa. Pode-se atualizar\npreço e adiconar serviços, para tal clique\nem 'Salvar Tarefa' e em 'Atualizar'.\nClique em 'Adicionar Tarefas e Produtos' para\nsalvar serviços/produtos em apenas uma tela.", font=("Arial", 7)).pack(side=TOP)
 
     #creating search label and entry in second frame
     lbl_txtsearch = Label(LeftViewForm, text="Pesquise aqui", font=('verdana', 10),bg="gray")
@@ -366,7 +366,6 @@ def save_tasks():
         #refresh table data
         DisplayData()
         conn.close()
-
 def read_screenForm():
     #open database
     Database()
@@ -570,12 +569,14 @@ def Print():
             a6='Preço Total(R$): '+hct5
             a7='Serviço(s): '+ict5
             content0=a1+a2+a3+a4+a42+a43+a5+a7+a6
+            global content
             content=content0.translate({ord(i): '\n' for i in ","})
             cursor.close()
             conn.close()
     #PRINT
+    brand=str(company_brand.upper)
     global q
-    q='------------------------------------------------------------------\n'+company_brand.upper+'\n------------------------------------------------------------------\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'------------------------------------------------------------------'
+    q='------------------------------------------------------------------\n'+brand+'\n------------------------------------------------------------------\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'------------------------------------------------------------------'
     filename=tempfile.mktemp(".txt")
     open (filename, "w"). write(q)
     os.startfile(filename, "print")
