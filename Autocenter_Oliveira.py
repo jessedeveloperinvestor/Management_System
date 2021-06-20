@@ -71,12 +71,12 @@ def DisplayForm():
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=mec).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Fone ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=contact).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Preço(R$) ", font=("Arial", 13)).pack(side=TOP)
+    Label(LFrom, text="Preço Total(R$)", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=price).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Serviço ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, pady=10, fill=X)
     Button(LFrom,text="Salvar tarefa",font=("Arial", 12, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
-    Button(LFrom,text="Salvar",font=("Arial", 12, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
+    Button(LFrom,text="SALVAR TUDO",font=("Arial", 12, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
     Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\nDeve-se usar ponto,\n ao invés de vírgula.\nClique em 'Salvar Tarefa' e 'Salvar'.\npara salvar e para pular de linha\nna nota a ser impressa. Pode-se atualizar\npreço e adiconar serviços, para tal clique\nem 'Salvar Tarefa' e em 'Atualizar'", font=("Arial", 7)).pack(side=TOP)
 
     #creating search label and entry in second frame
@@ -108,13 +108,13 @@ def DisplayForm():
     btn_inputs = Button(LeftViewForm, text="Adicionar\nTarefas e\nProdutos", command=input_screenForm)
     btn_inputs.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating read_screen button
-    btn_read = Button(LeftViewForm, text="Ver Ordem\nde Serviço", command=read_screenForm)
+    btn_read = Button(LeftViewForm, text="Ver Ordem\nde Serviços", command=read_screenForm)
     btn_read.pack(side=TOP, padx=10, pady=10, fill=X)
 
    #setting scrollbar
     scrollbarx = Scrollbar(MidViewForm, orient=HORIZONTAL)
     scrollbary = Scrollbar(MidViewForm, orient=VERTICAL)
-    tree = ttk.Treeview(MidViewForm,columns=("Id", "Nome", "Placa","Data de Entrada","Data de Saída","Mecânico","Fone", "Preço(R$)", "Serviço"),
+    tree = ttk.Treeview(MidViewForm,columns=("Id", "Nome", "Placa","Data de Entrada","Data de Saída","Mecânico","Fone", "Preço Total(R$)", "Serviço"),
                         selectmode="extended", height=100, yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
     scrollbary.config(command=tree.yview)
     scrollbary.pack(side=RIGHT, fill=Y)
@@ -128,7 +128,7 @@ def DisplayForm():
     tree.heading('Data de Saída', text="Data de Saída", anchor=W)
     tree.heading('Mecânico', text="Mecânico", anchor=W)
     tree.heading('Fone', text="Fone", anchor=W)
-    tree.heading('Preço(R$)', text="Preço(R$)", anchor=W)
+    tree.heading('Preço Total(R$)', text="Preço Total(R$)", anchor=W)
     tree.heading('Serviço', text="Serviço", anchor=W)
     #setting width of the columns
     tree.column('#0', stretch=NO, minwidth=0, width=0)
@@ -219,7 +219,7 @@ def input_screenForm():
             self.submit_button = tk.Button(self.root, text="Inserir", command=self.insert_data)
             self.submit_button.grid(row=2, column=1, sticky=tk.W)
      
-            self.exit_button = tk.Button(self.root, text="SALVAR\nTUDO", command=input_screen2Form)
+            self.exit_button = tk.Button(self.root, text="SALVAR\nTAREFAS", command=input_screen2Form)
             self.exit_button.grid(row=0, column=3)
      
             # Set the treeview
@@ -247,7 +247,7 @@ def input_screenForm():
                                          self.entry2.get()))
             self.iid = self.iid + 1
             self.id = self.id + 1
-            tasks.append(self.entry1.get())
+            tasks.append(self.entry1.get()+'|')
             tasks_prices.append(float(self.entry2.get()))
     app = Application(tk.Tk())
     app.root.mainloop()
@@ -300,7 +300,7 @@ def input_screen2Form():
             # Set the heading (Attribute Names)
             self.tree.heading('#0', text='Id')
             self.tree.heading('#1', text='Quantidade')
-            self.tree.heading('#2', text='Tarefa')
+            self.tree.heading('#2', text='Produto')
             self.tree.heading('#3', text='Preço')
      
             # Specify attributes of the columns (We want to stretch it!)
@@ -323,7 +323,7 @@ def input_screen2Form():
             self.iid = self.iid + 1
             self.id = self.id + 1
             products_amounts.append(float(self.entry1.get()))
-            products.append(self.entry2.get())
+            products.append(self.entry2.get()+'|')
             products_prices.append(float(self.entry3.get()))
     app = Application(tk.Tk())
     app.root.mainloop()
@@ -368,7 +368,110 @@ def save_tasks():
         conn.close()
 
 def read_screenForm():
-    nj=0
+    #open database
+    Database()
+    if not tree.selection():
+        tkMessageBox.showwarning("Aviso","Selecione a linha de pedido a ser visualizado")
+    else:
+        result = tkMessageBox.askquestion('Confirmar', 'Você quer visualizar este pedido?',
+                                          icon="warning")
+        if result == 'yes':
+            curItem = tree.focus()
+            contents = (tree.item(curItem))
+            selecteditem = contents['values']
+            tree.delete(curItem)
+
+            cursor=conn.execute("SELECT ID FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            ct1=str(fetch).translate({ord(i): None for i in "'"})
+            ct2=ct1.translate({ord(i): None for i in "["})
+            ct3=ct2.translate({ord(i): None for i in "]"})
+            ct4=ct3.translate({ord(i): None for i in "("})
+            ct004=ct4.translate({ord(i): None for i in ")"})
+            ct5=ct004.translate({ord(i): None for i in ","})
+
+            cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            fct1=str(fetch).translate({ord(i): None for i in "'"})
+            fct2=fct1.translate({ord(i): None for i in "["})
+            fct3=fct2.translate({ord(i): None for i in "]"})
+            fct4=fct3.translate({ord(i): None for i in "("})
+            wwz=fct4.translate({ord(i): None for i in ")"})
+            hct5=wwz.translate({ord(i): None for i in ","})
+
+            cursor=conn.execute("SELECT SERVICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            gct1=str(fetch).translate({ord(i): None for i in "'"})
+            gct2=gct1.translate({ord(i): None for i in "["})
+            gct3=gct2.translate({ord(i): None for i in "]"})
+            gct4=gct3.translate({ord(i): None for i in "("})
+            ictx=gct4.translate({ord(i): None for i in ")"})
+            ict5=ictx.translate({ord(i): None for i in '"'})
+
+            cursor.close()
+            conn.close()
+    
+            import tkinter as tk
+            import tkinter.ttk as ttk
+            class Application(tk.Frame):
+                def __init__(self, root):
+                    self.root = root
+                    self.initialize_user_interface()
+                def initialize_user_interface(self):
+                    # Configure the root object for the Application
+                    self.root.title("ORDEM DE PEDIDO")
+                    self.root.grid_rowconfigure(0, weight=1)
+                    self.root.grid_columnconfigure(0, weight=1)
+                    self.root.config(background="black")
+             
+             
+                    self.idnumber_label = tk.Label(self.root, text="SERVIÇOS E PRODUTOS DO PEDIDO")
+                    self.label_see_request = tk.Label(self.root, text="")
+                    self.idnumber_label.grid(row=2, column=0, sticky=tk.W)
+                    self.label_see_request.grid(row=2, column=1)
+
+                 
+                    # Set the treeview
+                    self.tree = ttk.Treeview(self.root, columns=('Número do Pedido','Serviço/Produto', 'Preço Total'))
+             
+                    # Set the heading (Attribute Names)
+                    self.tree.heading('#0', text='Id')
+                    self.tree.heading('#1', text='Número do Pedido')
+                    self.tree.heading('#2', text='Serviços/Produtos')
+                    self.tree.heading('#3', text='Preço Total')
+             
+                    # Specify attributes of the columns (We want to stretch it!)
+                    self.tree.column('#0', stretch=tk.YES)
+                    self.tree.column('#1', stretch=tk.YES)
+                    self.tree.column('#2', stretch=tk.YES)
+                    self.tree.column('#3', stretch=tk.YES)
+             
+                    self.tree.grid(row=4, columnspan=4, sticky='nsew')
+                    self.treeview = self.tree
+             
+                    self.id = 0
+                    self.iid = 0
+
+                    serv_prod_list=str(ict5).split('|')
+                    listed=[]
+                    i=0
+                    count=0
+                    for j in str(ict5):
+                        if str(j) == '|':
+                            count+=1
+                    z=1+int(count)
+                    while i < z:
+                        listed.append(serv_prod_list[i])
+                        self.treeview.insert('', 'end', iid=self.iid, text=str(self.id),
+                                             values=(ct5,
+                                                     serv_prod_list[i],
+                                                     hct5))
+                        self.iid = self.iid + 1
+                        self.id = self.id + 1
+                        i=i+1
+
+            app = Application(tk.Tk())
+            app.root.mainloop()
 
 def Print():
         #open database
@@ -464,7 +567,7 @@ def Print():
             a42='Data de Saída: '+fct52
             a43='Mecânico: '+mfct5
             a5='Fone: '+gct5
-            a6='Preço: '+hct5
+            a6='Preço Total(R$): '+hct5
             a7='Serviço(s): '+ict5
             content0=a1+a2+a3+a4+a42+a43+a5+a7+a6
             content=content0.translate({ord(i): '\n' for i in ","})
