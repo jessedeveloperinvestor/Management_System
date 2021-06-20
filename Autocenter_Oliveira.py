@@ -418,13 +418,19 @@ def read_screenForm():
                     self.initialize_user_interface()
                 def initialize_user_interface(self):
                     # Configure the root object for the Application
+                    self.root.geometry('400x300')
                     self.root.title("ORDEM DE PEDIDO")
                     self.root.grid_rowconfigure(0, weight=1)
                     self.root.grid_columnconfigure(0, weight=1)
-                    self.root.config(background="black")
+                    self.root.config(background="gray")
              
+                    self.name_label = tk.Label(self.root, text="PREÇO TOTAL:(R$) "+hct5)
+                    self.name_label.grid(row=1, column=0, sticky=tk.W)
+
+                    self.name_label2 = tk.Label(self.root, text="NÚMERO DO PEDIDO:(R$) "+ct5)
+                    self.name_label2.grid(row=0, column=0, sticky=tk.W)
              
-                    self.idnumber_label = tk.Label(self.root, text="SERVIÇOS E PRODUTOS DO PEDIDO")
+                    self.idnumber_label = tk.Label(self.root, text="SERVIÇOS E PRODUTOS DO PEDIDO:")
                     self.label_see_request = tk.Label(self.root, text="")
                     self.idnumber_label.grid(row=2, column=0, sticky=tk.W)
                     self.label_see_request.grid(row=2, column=1)
@@ -435,17 +441,13 @@ def read_screenForm():
              
                     # Set the heading (Attribute Names)
                     self.tree.heading('#0', text='Id')
-                    self.tree.heading('#1', text='Número do Pedido')
-                    self.tree.heading('#2', text='Serviços/Produtos')
-                    self.tree.heading('#3', text='Preço Total')
+                    self.tree.heading('#1', text='Serviços/Produtos')
              
                     # Specify attributes of the columns (We want to stretch it!)
                     self.tree.column('#0', stretch=tk.YES)
                     self.tree.column('#1', stretch=tk.YES)
-                    self.tree.column('#2', stretch=tk.YES)
-                    self.tree.column('#3', stretch=tk.YES)
              
-                    self.tree.grid(row=4, columnspan=4, sticky='nsew')
+                    self.tree.grid(row=3, columnspan=4, sticky='nsew')
                     self.treeview = self.tree
              
                     self.id = 0
@@ -462,9 +464,7 @@ def read_screenForm():
                     while i < z:
                         listed.append(serv_prod_list[i])
                         self.treeview.insert('', 'end', iid=self.iid, text=str(self.id),
-                                             values=(ct5,
-                                                     serv_prod_list[i],
-                                                     hct5))
+                                             values=(serv_prod_list[i]))
                         self.iid = self.iid + 1
                         self.id = self.id + 1
                         i=i+1
