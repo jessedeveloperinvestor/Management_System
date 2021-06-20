@@ -8,6 +8,9 @@ import tkinter.messagebox as tkMessageBox
 import sqlite3
 from PIL import Image, ImageTk
 
+global company_brand
+company_brand="Auto Center Oliveira"
+
 #function to define database
 def Database():
     global conn, cursor
@@ -16,7 +19,7 @@ def Database():
     cursor = conn.cursor()
     #creating STUD_REGISTRATION table
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, DATE2 TEXT, MEC TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT, PRICESSERV TEXT, PRODUCT TEXT, PRICESPROD TEXT)")
+        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, DATE2 TEXT, MEC TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT)")
 
 #defining function for creating GUI Layout
 def DisplayForm():
@@ -53,7 +56,7 @@ def DisplayForm():
     MidViewForm.pack(side=RIGHT)
 
     #label for heading
-    lbl_text = Label(TopViewForm, text="Auto Center Oliveira", font=('verdana', 25), width=600,bg="#1C2833",fg="white")
+    lbl_text = Label(TopViewForm, text=company_brand, font=('verdana', 25), width=600,bg="#1C2833",fg="white")
     lbl_text.pack(fill=X)
     #creating registration form in first left frame
     Label(LFrom, text="Nome  ", font=("Arial", 13)).pack(side=TOP)
@@ -86,20 +89,28 @@ def DisplayForm():
     btn_search = Button(LeftViewForm, text="Pesquisar\nPLACA", command=SearchRecord)
     btn_search.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating search button
-    btn_search = Button(LeftViewForm, text="Pesquisar\nNÚMERO", command=SearchRecord2)
-    btn_search.pack(side=TOP, padx=10, pady=10, fill=X)
+    btn_search2 = Button(LeftViewForm, text="Pesquisar\nNÚMERO", command=SearchRecord2)
+    btn_search2.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating view button
     btn_view = Button(LeftViewForm, text="Ver tudo", command=DisplayData)
     btn_view.pack(side=TOP, padx=10, pady=10, fill=X)
-    #creating reset button
-    btn_reset = Button(LeftViewForm, text="Imprimir", command=Print)
-    btn_reset.pack(side=TOP, padx=10, pady=10, fill=X)
+    #creating printing button
+    btn_print = Button(LeftViewForm, text="Imprimir", command=Print)
+    btn_print.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating delete button
     btn_delete = Button(LeftViewForm, text="Apagar", command=Delete)
     btn_delete.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating update button
-    btn_delete = Button(LeftViewForm, text="Atualizar", command=Update)
-    btn_delete.pack(side=TOP, padx=10, pady=10, fill=X)
+    btn_update = Button(LeftViewForm, text="Atualizar", command=Update)
+    btn_update.pack(side=TOP, padx=10, pady=10, fill=X)
+
+    #creating input_screen button
+    btn_inputs = Button(LeftViewForm, text="Adicionar\nTarefas e\nProdutos", command=input_screenForm)
+    btn_inputs.pack(side=TOP, padx=10, pady=10, fill=X)
+    #creating read_screen button
+    btn_read = Button(LeftViewForm, text="Ver Ordem\nde Serviço", command=read_screenForm)
+    btn_read.pack(side=TOP, padx=10, pady=10, fill=X)
+
    #setting scrollbar
     scrollbarx = Scrollbar(MidViewForm, orient=HORIZONTAL)
     scrollbary = Scrollbar(MidViewForm, orient=VERTICAL)
@@ -131,13 +142,14 @@ def DisplayForm():
     tree.pack()
     DisplayData()
 
-#IMAGE
-    image0 = Image.open("AO.png")
-    image1 = image0.resize((43, 43), Image.ANTIALIAS)
-    test = ImageTk.PhotoImage(image1)
-    label1 = tkinter.Label(image=test)
-    label1.image = test
-    label1.place(x=275, y=0.45)
+    #IMAGE
+    if company_brand=='Auto Center Oliveira':
+        image0 = Image.open("AO.png")
+        image1 = image0.resize((43, 43), Image.ANTIALIAS)
+        test = ImageTk.PhotoImage(image1)
+        label1 = tkinter.Label(image=test)
+        label1.image = test
+        label1.place(x=275, y=0.45)
 
 global s01
 s01=['']
@@ -173,6 +185,191 @@ def register():
     #refresh table data
     DisplayData()
     conn.close()
+
+def input_screenForm():
+    import tkinter as tk
+    import tkinter.ttk as ttk
+    global tasks, tasks_prices
+    tasks=[]
+    tasks_prices=[]
+ 
+    class Application(tk.Frame):
+        def __init__(self, root):
+            self.root = root
+            self.initialize_user_interface()
+     
+        def initialize_user_interface(self):
+            # Configure the root object for the Application
+            self.root.title("SERVIÇO(S)")
+            self.root.grid_rowconfigure(0, weight=1)
+            self.root.grid_columnconfigure(0, weight=1)
+            self.root.config(background="black")
+     
+            # Define the different GUI widgets
+            self.name_label = tk.Label(self.root, text="TAREFA:")
+            self.entry1 = tk.Entry(self.root)
+            self.name_label.grid(row=0, column=0, sticky=tk.W)
+            self.entry1.grid(row=0, column=1)
+     
+            self.idnumber_label = tk.Label(self.root, text="PREÇO(R$)")
+            self.entry2 = tk.Entry(self.root)
+            self.idnumber_label.grid(row=1, column=0, sticky=tk.W)
+            self.entry2.grid(row=1, column=1)
+     
+            self.submit_button = tk.Button(self.root, text="Inserir", command=self.insert_data)
+            self.submit_button.grid(row=2, column=1, sticky=tk.W)
+     
+            self.exit_button = tk.Button(self.root, text="SALVAR\nTUDO", command=input_screen2Form)
+            self.exit_button.grid(row=0, column=3)
+     
+            # Set the treeview
+            self.tree = ttk.Treeview(self.root, columns=('Tarefa', 'Preço'))
+     
+            # Set the heading (Attribute Names)
+            self.tree.heading('#0', text='Id')
+            self.tree.heading('#1', text='Tarefa')
+            self.tree.heading('#2', text='Preço')
+     
+            # Specify attributes of the columns (We want to stretch it!)
+            self.tree.column('#0', stretch=tk.YES)
+            self.tree.column('#1', stretch=tk.YES)
+            self.tree.column('#2', stretch=tk.YES)
+     
+            self.tree.grid(row=4, columnspan=4, sticky='nsew')
+            self.treeview = self.tree
+     
+            self.id = 0
+            self.iid = 0
+     
+        def insert_data(self):
+            self.treeview.insert('', 'end', iid=self.iid, text=str(self.id),
+                                 values=(self.entry1.get(),
+                                         self.entry2.get()))
+            self.iid = self.iid + 1
+            self.id = self.id + 1
+            tasks.append(self.entry1.get())
+            tasks_prices.append(float(self.entry2.get()))
+    app = Application(tk.Tk())
+    app.root.mainloop()
+
+def input_screen2Form():
+    import tkinter as tk
+    import tkinter.ttk as ttk
+    global products_amounts, products, products_prices
+    products_amounts=[]
+    products=[]
+    products_prices=[]
+ 
+    class Application(tk.Frame):
+        def __init__(self, root):
+            self.root = root
+            self.initialize_user_interface()
+     
+        def initialize_user_interface(self):
+            # Configure the root object for the Application
+            self.root.title("PRODUTO(S)")
+            self.root.grid_rowconfigure(0, weight=1)
+            self.root.grid_columnconfigure(0, weight=1)
+            self.root.config(background="black")
+     
+            # Define the different GUI widgets
+            self.name_label = tk.Label(self.root, text="QUANTIDADE:")
+            self.entry1 = tk.Entry(self.root)
+            self.name_label.grid(row=0, column=0, sticky=tk.W)
+            self.entry1.grid(row=0, column=1)
+
+            self.name_label = tk.Label(self.root, text="PRODUTO:")
+            self.entry2 = tk.Entry(self.root)
+            self.name_label.grid(row=1, column=0, sticky=tk.W)
+            self.entry2.grid(row=1, column=1)
+     
+            self.idnumber_label = tk.Label(self.root, text="PREÇO(R$)")
+            self.entry3 = tk.Entry(self.root)
+            self.idnumber_label.grid(row=2, column=0, sticky=tk.W)
+            self.entry3.grid(row=2, column=1)
+     
+            self.submit_button = tk.Button(self.root, text="Inserir", command=self.insert_data)
+            self.submit_button.grid(row=3, column=1, sticky=tk.W)
+     
+            self.exit_button = tk.Button(self.root, text="SALVAR\nTUDO", command=save_tasks)
+            self.exit_button.grid(row=0, column=3)
+     
+            # Set the treeview
+            self.tree = ttk.Treeview(self.root, columns=('Quantidade','Produto', 'Preço'))
+     
+            # Set the heading (Attribute Names)
+            self.tree.heading('#0', text='Id')
+            self.tree.heading('#1', text='Quantidade')
+            self.tree.heading('#2', text='Tarefa')
+            self.tree.heading('#3', text='Preço')
+     
+            # Specify attributes of the columns (We want to stretch it!)
+            self.tree.column('#0', stretch=tk.YES)
+            self.tree.column('#1', stretch=tk.YES)
+            self.tree.column('#2', stretch=tk.YES)
+            self.tree.column('#3', stretch=tk.YES)
+     
+            self.tree.grid(row=4, columnspan=4, sticky='nsew')
+            self.treeview = self.tree
+     
+            self.id = 0
+            self.iid = 0
+     
+        def insert_data(self):
+            self.treeview.insert('', 'end', iid=self.iid, text=str(self.id),
+                                 values=(self.entry1.get(),
+                                         self.entry2.get(),
+                                         self.entry3.get()))
+            self.iid = self.iid + 1
+            self.id = self.id + 1
+            products_amounts.append(float(self.entry1.get()))
+            products.append(self.entry2.get())
+            products_prices.append(float(self.entry3.get()))
+    app = Application(tk.Tk())
+    app.root.mainloop()
+
+def save_tasks():
+    total_price_sum=0
+    try:
+        for g in range(len(products_prices)):
+           products_prices[g] = products_prices[g] * products_amounts[g]
+        total_price_sum = sum(tasks_prices)+sum(products_prices)
+        tkMessageBox.showwarning("PREÇO TOTAL DE TAREFAS E PRODUTOS É: "+str(total_price_sum)+'                                                                           ')
+    except:
+        tkMessageBox.showwarning("Em algum campo de preço foi inserido algo que não é número.\nFavor, refazer o preenchimento das tarefas e produtos")
+    s01=tasks
+    s01.append(products)
+
+    result = tkMessageBox.askquestion('Confirmar', 'Você quer salvar o pedido?\nIsto salvará os nomes, tarefas,\nprodutos, datas, placa etc',
+                                      icon="warning")
+    if result == 'yes':
+        s1=str(s01)
+        s2=s1.translate({ord(i): None for i in "["})
+        s3=s2.translate({ord(i): None for i in "]"})
+        s4=s3.translate({ord(i): None for i in ","})
+        services=s4
+        Database()
+        #getting form data
+        name1=name.get()
+        code1=code.get()
+        date1=date.get()
+        date21=date2.get()
+        mec1=mec.get()
+        contact1=contact.get()
+        price1=float(total_price_sum)
+        service1=services
+        #execute query
+        conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,DATE2,MEC,CONTACT,PRICE, SERVICE)
+        VALUES (?,?,?,?,?,?,?,?)''',(name1,code1.upper(),date1,date21,mec1,contact1,price1,service1))
+        conn.commit()
+        tkMessageBox.showinfo("Messagem","Salva com sucesso")
+        #refresh table data
+        DisplayData()
+        conn.close()
+
+def read_screenForm():
+    nj=0
+
 def Print():
         #open database
     Database()
@@ -275,7 +472,7 @@ def Print():
             conn.close()
     #PRINT
     global q
-    q='------------------------------------------------------------------\nAUTO CENTER OLIVEIRA\n------------------------------------------------------------------\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'------------------------------------------------------------------'
+    q='------------------------------------------------------------------\n'+company_brand.upper+'\n------------------------------------------------------------------\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'------------------------------------------------------------------'
     filename=tempfile.mktemp(".txt")
     open (filename, "w"). write(q)
     os.startfile(filename, "print")
