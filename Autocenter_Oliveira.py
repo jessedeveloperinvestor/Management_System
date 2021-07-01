@@ -75,7 +75,7 @@ def DisplayForm():
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=price).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Serviço ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, pady=10, fill=X)
-    Button(LFrom,text="Salvar\núnica tarefa",font=("Arial", 12, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
+    Button(LFrom,text="Pré atualizar tarefa",font=("Arial", 12, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
     Button(LFrom,text="SALVAR TUDO",font=("Arial", 12, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
     Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\nDeve-se usar ponto,\n ao invés de vírgula.Pode-se atualizar\npreço e adiconar serviços, para tal clique\nem 'Salvar Única Tarefa' e em 'Atualizar'.\nClique em 'Adicionar Tarefas e Produtos' para\nsalvar serviços/produtos em apenas uma tela.", font=("Arial", 7)).pack(side=TOP)
 
