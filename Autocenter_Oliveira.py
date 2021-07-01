@@ -71,13 +71,11 @@ def DisplayForm():
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=mec).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Fone ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=contact).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Preço Total(R$)", font=("Arial", 13)).pack(side=TOP)
+    Label(LFrom, text="Preço Total\na atualizar", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=price).pack(side=TOP, padx=10, fill=X)
-    Label(LFrom, text="Serviço ", font=("Arial", 13)).pack(side=TOP)
+    Label(LFrom, text="Tarefa a\nadicionar", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, pady=10, fill=X)
-    Button(LFrom,text="Pré atualizar tarefa",font=("Arial", 12, "bold"),command=enter).pack(side=TOP, padx=10,pady=5, fill=X)
-    Button(LFrom,text="SALVAR TUDO",font=("Arial", 12, "bold"),command=register).pack(side=TOP, padx=10,pady=5, fill=X)
-    Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\nDeve-se usar ponto,\n ao invés de vírgula.Pode-se atualizar\npreço e adiconar serviços, para tal clique\nem 'Salvar Única Tarefa' e em 'Atualizar'.\nClique em 'Adicionar Tarefas e Produtos' para\nsalvar serviços/produtos em apenas uma tela.", font=("Arial", 7)).pack(side=TOP)
+    Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\nDeve-se usar ponto,\n ao invés de vírgula.Pode-se atualizar\npreço e adiconar serviços, para tal clique\nem 'Atualizar'.\nClique em 'ADICIONAR TAREFAS E PRODUTOS' para\nsalvar serviços/produtos.", font=("Arial", 7)).pack(side=TOP)
 
     #creating search label and entry in second frame
     lbl_txtsearch = Label(LeftViewForm, text="Pesquise aqui", font=('verdana', 10),bg="gray")
@@ -105,7 +103,7 @@ def DisplayForm():
     btn_update.pack(side=TOP, padx=10, pady=10, fill=X)
 
     #creating input_screen button
-    btn_inputs = Button(LeftViewForm, text="Adicionar\nTarefas e\nProdutos", command=input_screenForm)
+    btn_inputs = Button(LeftViewForm, text="ADICIONAR\nTAREFAS E/OU\nPRODUTOS", command=input_screenForm)
     btn_inputs.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating read_screen button
     btn_read = Button(LeftViewForm, text="Ver Ordem\nde Serviços", command=read_screenForm)
@@ -154,38 +152,6 @@ def DisplayForm():
 global s01
 s01=['']
 #function to insert data into database
-def enter():
-    l=len(s01)
-    del s01[0:l]
-    global s1
-    stxt=service.get()+'|'
-    s0=stxt.split()
-    s01.append(s0)
-    s1=str(s01)
-def register():
-    s2=s1.translate({ord(i): None for i in "["})
-    s3=s2.translate({ord(i): None for i in "]"})
-    s4=s3.translate({ord(i): None for i in ","})
-    services=s4
-    Database()
-    #getting form data
-    name1=name.get()
-    code1=code.get()
-    date1=date.get()
-    date21=date2.get()
-    mec1=mec.get()
-    contact1=contact.get()
-    price1=price.get()
-    service1=services
-    #execute query
-    conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,DATE2,MEC,CONTACT,PRICE, SERVICE)
-    VALUES (?,?,?,?,?,?,?,?)''',(name1,code1.upper(),date1,date21,mec1,contact1,price1,service1))
-    conn.commit()
-    tkMessageBox.showinfo("Messagem","Salva com sucesso")
-    #refresh table data
-    DisplayData()
-    conn.close()
-
 def input_screenForm():
     import tkinter as tk
     import tkinter.ttk as ttk
