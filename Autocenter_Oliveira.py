@@ -7,6 +7,8 @@ import tkinter.ttk as ttk
 import tkinter.messagebox as tkMessageBox
 import sqlite3
 from PIL import Image, ImageTk
+import time
+from datetime import timedelta, date
 
 global company_brand
 company_brand="Auto Center Oliveira"
@@ -20,6 +22,16 @@ def Database():
     #creating STUD_REGISTRATION table
     cursor.execute(
         "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, DATE2 TEXT, MEC TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT)")
+
+#ALTER TABLE, THEN COMMENT THESE COMMANDS:
+    try:
+        open('file.txt','w')
+    except:
+        cursor.execute('''ALTER TABLE REGISTRATION ADD COLUMN TRANSACTIONS TEXT''')
+        cursor.execute('''ALTER TABLE REGISTRATION ADD COLUMN PAIDWHERE TEXT''')
+        file = open("file.txt", "w") 
+        file.write("1") 
+        file.close() 
 
 #defining function for creating GUI Layout
 def DisplayForm():
@@ -41,6 +53,10 @@ def DisplayForm():
     contact = StringVar()
     price = StringVar()
     service = StringVar()
+    global transactions
+    transactions = StringVar()
+    global paidwhere
+    paidwhere = StringVar()
 
     #topview frame for heading
     TopViewForm = Frame(display_screen, width=600, bd=1, relief=SOLID)
@@ -69,13 +85,17 @@ def DisplayForm():
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=date2).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Mecânico ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=mec).pack(side=TOP, padx=10, fill=X)
+    Label(LFrom, text="Tipo de Transação ", font=("Arial", 13)).pack(side=TOP)
+    Entry(LFrom, font=("Arial", 10, "bold"),textvariable=transactions).pack(side=TOP, padx=10, fill=X)
+    Label(LFrom, text="Pago Onde ", font=("Arial", 13)).pack(side=TOP)
+    Entry(LFrom, font=("Arial", 10, "bold"),textvariable=paidwhere).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Fone ", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=contact).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Preço Total\na atualizar", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=price).pack(side=TOP, padx=10, fill=X)
     Label(LFrom, text="Tarefa a\nadicionar", font=("Arial", 13)).pack(side=TOP)
     Entry(LFrom, font=("Arial", 10, "bold"),textvariable=service).pack(side=TOP, padx=10, pady=10, fill=X)
-    Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\nDeve-se usar ponto,\n ao invés de vírgula.Pode-se atualizar\npreço e adiconar serviços, para tal clique\nem 'Atualizar'.\nClique em 'ADICIONAR TAREFAS E PRODUTOS' para\nsalvar serviços/produtos.", font=("Arial", 7)).pack(side=TOP)
+    Label(LFrom, text="Pode-se inserir apenas placa,\ndatas e preço, após placa\nter sido cadastrada.\nDeve-se usar ponto,\n ao invés de vírgula.Pode-se atualizar\npreço e adiconar serviços, para tal clique\nem 'Atualizar'.\nClique em 'ADICIONAR TAREFAS E PRODUTOS' para\nsalvar serviços/produtos\nEm Tipo de Transações, pode-se pôr: Débito, crédito, Dinheiro etc\nEm Pago Onde, pode-se pôr: Oficina, Autopeças etc .", font=("Arial", 7)).pack(side=TOP)
 
     #creating search label and entry in second frame
     lbl_txtsearch = Label(LeftViewForm, text="Pesquise aqui", font=('verdana', 10),bg="gray")
@@ -108,11 +128,14 @@ def DisplayForm():
     #creating read_screen button
     btn_read = Button(LeftViewForm, text="Ver Ordem\nde Serviços", command=read_screenForm)
     btn_read.pack(side=TOP, padx=10, pady=10, fill=X)
+    #creating report_screen button
+    btn_read = Button(LeftViewForm, text="Relatório", command=report_screenForm)
+    btn_read.pack(side=TOP, padx=10, pady=10, fill=X)
 
    #setting scrollbar
     scrollbarx = Scrollbar(MidViewForm, orient=HORIZONTAL)
     scrollbary = Scrollbar(MidViewForm, orient=VERTICAL)
-    tree = ttk.Treeview(MidViewForm,columns=("Id", "Nome", "Placa","Data de Entrada","Data de Saída","Mecânico","Fone", "Preço Total(R$)", "Serviço"),
+    tree = ttk.Treeview(MidViewForm,columns=("Id", "Nome", "Placa","Data de Entrada","Data de Saída","Mecânico","Fone", "Preço Total(R$)", "Serviço","Tipo de Transação","Pago Onde"),
                         selectmode="extended", height=100, yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
     scrollbary.config(command=tree.yview)
     scrollbary.pack(side=RIGHT, fill=Y)
@@ -128,15 +151,19 @@ def DisplayForm():
     tree.heading('Fone', text="Fone", anchor=W)
     tree.heading('Preço Total(R$)', text="Preço Total(R$)", anchor=W)
     tree.heading('Serviço', text="Serviço", anchor=W)
+    tree.heading('Tipo de Transação', text="Tipo de Transação", anchor=W)
+    tree.heading('Pago Onde', text="Pago Onde", anchor=W)
     #setting width of the columns
     tree.column('#0', stretch=NO, minwidth=0, width=0)
     tree.column('#1', stretch=NO, minwidth=0, width=200)
-    tree.column('#2', stretch=NO, minwidth=0, width=70)
-    tree.column('#3', stretch=NO, minwidth=0, width=80)
-    tree.column('#4', stretch=NO, minwidth=0, width=80)
-    tree.column('#5', stretch=NO, minwidth=0, width=70)
-    tree.column('#6', stretch=NO, minwidth=0, width=70)
-    tree.column('#7', stretch=NO, minwidth=0, width=70)
+    tree.column('#2', stretch=NO, minwidth=0, width=60)
+    tree.column('#3', stretch=NO, minwidth=0, width=50)
+    tree.column('#4', stretch=NO, minwidth=0, width=45)
+    tree.column('#5', stretch=NO, minwidth=0, width=45)
+    tree.column('#6', stretch=NO, minwidth=0, width=40)
+    tree.column('#7', stretch=NO, minwidth=0, width=75)
+    tree.column('#8', stretch=NO, minwidth=0, width=40)
+    tree.column('#9', stretch=NO, minwidth=0, width=80)
     tree.pack()
     DisplayData()
 
@@ -324,9 +351,11 @@ def save_tasks():
         contact1=contact.get()
         price1=float(total_price_sum)
         service1=services
+        transactions1=transactions.get()
+        paidwhere1=paidwhere.get()
         #execute query
-        conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,DATE2,MEC,CONTACT,PRICE, SERVICE)
-        VALUES (?,?,?,?,?,?,?,?)''',(name1,code1.upper(),date1,date21,mec1,contact1,price1,service1))
+        conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,DATE2,MEC,TRANSACTIONS,PAIDWHERE,CONTACT,PRICE, SERVICE)
+        VALUES (?,?,?,?,?,?,?,?,?,?)''',(name1,code1.upper(),date1,date21,mec1,transactions1,paidwhere1,contact1,price1,service1))
         conn.commit()
         tkMessageBox.showinfo("Messagem","Salva com sucesso")
         #refresh table data
@@ -373,6 +402,24 @@ def read_screenForm():
             ictx=gct4.translate({ord(i): None for i in ")"})
             ict5=ictx.translate({ord(i): None for i in '"'})
 
+            cursor=conn.execute("SELECT TRANSACTIONS FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            afct1=str(fetch).translate({ord(i): None for i in "'"})
+            afct2=afct1.translate({ord(i): None for i in "["})
+            afct3=afct2.translate({ord(i): None for i in "]"})
+            afct4=afct3.translate({ord(i): None for i in "("})
+            awwz=afct4.translate({ord(i): None for i in ")"})
+            ahct5=awwz.translate({ord(i): None for i in ","})
+
+            cursor=conn.execute("SELECT PAIDWHERE    FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            bgct1=str(fetch).translate({ord(i): None for i in "'"})
+            bgct2=bgct1.translate({ord(i): None for i in "["})
+            bgct3=bgct2.translate({ord(i): None for i in "]"})
+            bgct4=bgct3.translate({ord(i): None for i in "("})
+            bictx=bgct4.translate({ord(i): None for i in ")"})
+            bict5=bictx.translate({ord(i): None for i in '"'})
+
             cursor.close()
             conn.close()
     
@@ -395,11 +442,17 @@ def read_screenForm():
 
                     self.name_label2 = tk.Label(self.root, text="NÚMERO DO PEDIDO:(R$) "+ct5)
                     self.name_label2.grid(row=0, column=0, sticky=tk.W)
+
+                    self.name_label = tk.Label(self.root, text="TIPO DE TRANSAÇÃO:(R$) "+ahct5)
+                    self.name_label.grid(row=2, column=0, sticky=tk.W)
+
+                    self.name_label2 = tk.Label(self.root, text="PAGO ONDE:(R$) "+ bict5)
+                    self.name_label2.grid(row=3, column=0, sticky=tk.W)
              
                     self.idnumber_label = tk.Label(self.root, text="SERVIÇOS E PRODUTOS DO PEDIDO:")
                     self.label_see_request = tk.Label(self.root, text="")
-                    self.idnumber_label.grid(row=2, column=0, sticky=tk.W)
-                    self.label_see_request.grid(row=2, column=1)
+                    self.idnumber_label.grid(row=4, column=0, sticky=tk.W)
+                    self.label_see_request.grid(row=4, column=1)
 
                  
                     # Set the treeview
@@ -413,7 +466,7 @@ def read_screenForm():
                     self.tree.column('#0', stretch=tk.YES)
                     self.tree.column('#1', stretch=tk.YES)
              
-                    self.tree.grid(row=3, columnspan=4, sticky='nsew')
+                    self.tree.grid(row=5, columnspan=4, sticky='nsew')
                     self.treeview = self.tree
              
                     self.id = 0
@@ -437,6 +490,137 @@ def read_screenForm():
 
             app = Application(tk.Tk())
             app.root.mainloop()
+
+global xxy
+xxy=[]
+
+def report_screenForm():
+    import tkinter as tk
+    import tkinter.ttk as ttk
+    class Application(tk.Frame):
+        def __init__(self, root):
+            self.root = root
+            self.initialize_user_interface()
+        def initialize_user_interface(self):
+            # Configure the root object for the Application
+            self.root.geometry('500x350')
+            self.root.title("RELATÓRIO")
+            self.root.grid_rowconfigure(0, weight=1)
+            self.root.grid_columnconfigure(0, weight=1)
+            self.root.config(background="gray")
+            def Print_Report():
+                import datetime
+                self.treeview.insert('', 'end', iid=self.iid, text=str(self.id),
+                     values=(self.entry1.get(),
+                             self.entry2.get()))
+                self.iid = self.iid + 1
+                self.id = self.id + 1
+                aaa=[]
+                bbb=[]
+                aaa.append(self.entry1.get())
+                bbb.append(self.entry2.get())
+                aai=str(aaa)
+                bbi=str(bbb)
+
+                ii=aai.split('/')
+                ff=bbi.split('/')
+
+                import pandas as pd
+                yeari1=ii[2].translate({ord(i): None for i in '['})
+                yeari2=yeari1.translate({ord(i): None for i in ']'})
+                yeari=yeari2.translate({ord(i): None for i in "'"})
+                yearf1=ff[2].translate({ord(i): None for i in '['})
+                yearf2=yearf1.translate({ord(i): None for i in ']'})
+                yearf=yearf2.translate({ord(i): None for i in "'"})
+
+                mi1=ii[1].translate({ord(i): None for i in '['})
+                mi2=mi1.translate({ord(i): None for i in ']'})
+                mi=mi2.translate({ord(i): None for i in "'"})
+                mf1=ff[1].translate({ord(i): None for i in '['})
+                mf2=mf1.translate({ord(i): None for i in ']'})
+                mf=mf2.translate({ord(i): None for i in "'"})
+
+                di1=ii[0].translate({ord(i): None for i in '['})
+                di2=di1.translate({ord(i): None for i in ']'})
+                di=di2.translate({ord(i): None for i in "'"})
+                df1=ff[0].translate({ord(i): None for i in '['})
+                df2=df1.translate({ord(i): None for i in ']'})
+                df=df2.translate({ord(i): None for i in "'"})
+                from datetime import date, timedelta
+                sdate = date(int(yeari), int(mi), int(di))   # start date
+                filename=tempfile.mktemp(".txt")
+                q='RELATÓRIO DE FATURAMENTO AUTO CENTER OLIVEIRA\n'
+                open (filename, "w"). write(q)
+                print(q)
+                edate = date(int(yearf), int(mf), int(df))   # end date
+                delta = edate - sdate       # as timedelta
+                for i in range(delta.days + 1):
+                    day = sdate + timedelta(days=i)
+                    interm=str(day)
+                    sep=interm.split('-')
+                    date_between=str(sep[2])+'/'+str(sep[1])+'/'+str(sep[0])
+
+                    Database()
+                    cursor=conn.execute("SELECT PRICE, ID, DATE2, SERVICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
+                    fetch = cursor.fetchall()
+                    ct1=str(fetch).translate({ord(i): None for i in "'"})
+                    ct2=ct1.translate({ord(i): None for i in "["})
+                    ct3=ct2.translate({ord(i): None for i in "]"})
+                    ct4=ct3.translate({ord(i): None for i in "("})
+                    ct004=ct4.translate({ord(i): '{' for i in ")"})
+                    ct0045=ct004.translate({ord(i): None for i in ","})
+                    ct5=ct0045.translate({ord(i): None for i in '"'})
+                    report_data=ct5.split('{')
+                    inte=str(report_data)
+                    listfin=[]
+                    listfin.append(inte)
+                    listfin2=str(listfin).translate({ord(i): None for i in '"'})
+                    result=listfin2.translate({ord(i): None for i in "['']"})
+                    if result != '':
+                        print(result)
+                        open (filename, "w"). write(result)
+                    os.startfile(filename, "print")
+
+            self.name_label = tk.Label(self.root, text="Data Inicial:dd/mm/aaaa")
+            self.entry1 = tk.Entry(self.root)
+            self.name_label.grid(row=1, column=0, sticky=tk.W)
+            self.entry1.grid(row=2, column=0)
+            
+            self.name_label = tk.Label(self.root, text="Data Final:dd/mm/aaaa")
+            self.entry2 = tk.Entry(self.root)
+            self.name_label.grid(row=1, column=1, sticky=tk.W)
+            self.entry2.grid(row=2, column=1)
+
+            self.submit_button = tk.Button(self.root, text="Gerar Relatório", command=Print_Report)
+            self.submit_button.grid(row=3, column=1, sticky=tk.W)
+
+            #open database
+            Database()
+            curItem = tree.focus()
+            contents = (tree.item(curItem))
+            selecteditem = contents['values']
+
+            # Set the treeview
+            self.tree = ttk.Treeview(self.root, columns=('Id','Data Inicial','Data Final'))
+
+            # Set the heading (Attribute Names)
+            self.tree.heading('#0', text='Data Id')
+            self.tree.heading('#1', text='Data Inicial')
+            self.tree.heading('#2', text='Data Final')
+     
+            # Specify attributes of the columns (We want to stretch it!)
+            self.tree.column('#0', stretch=tk.YES)
+            self.tree.column('#1', stretch=tk.YES)
+            self.tree.column('#2', stretch=tk.YES)
+     
+            self.tree.grid(row=4, columnspan=4, sticky='nsew')
+            self.treeview = self.tree
+     
+            self.id = 0
+            self.iid = 0
+ 
+    app = Application(tk.Tk())
+    app.root.mainloop()
 
 def Print():
         #open database
@@ -525,6 +709,24 @@ def Print():
             ictx=gct4.translate({ord(i): None for i in ")"})
             ict5=ictx.translate({ord(i): None for i in '"'})
 
+            cursor=conn.execute("SELECT TRANSACTIONS FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            afct1=str(fetch).translate({ord(i): None for i in "'"})
+            afct2=afct1.translate({ord(i): None for i in "["})
+            afct3=afct2.translate({ord(i): None for i in "]"})
+            afct4=afct3.translate({ord(i): None for i in "("})
+            awwz=afct4.translate({ord(i): None for i in ")"})
+            ahct5=awwz.translate({ord(i): None for i in ","})
+
+            cursor=conn.execute("SELECT PAIDWHERE    FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            bgct1=str(fetch).translate({ord(i): None for i in "'"})
+            bgct2=bgct1.translate({ord(i): None for i in "["})
+            bgct3=bgct2.translate({ord(i): None for i in "]"})
+            bgct4=bgct3.translate({ord(i): None for i in "("})
+            bictx=bgct4.translate({ord(i): None for i in ")"})
+            bict5=bictx.translate({ord(i): None for i in '"'})
+
             a1='Número de ordem: '+ct5
             a2='Nome: '+dct5
             a3='Placa: '+ect5
@@ -534,7 +736,9 @@ def Print():
             a5='Fone: '+gct5
             a6='Preço Total(R$): '+hct5
             a7='Serviço(s): '+ict5
-            content0=a1+a2+a3+a4+a42+a43+a5+a7+a6
+            a8='Tipo de Transação: '+ahct5
+            a9='Pago Onde: '+bict5
+            content0=a1+a2+a3+a4+a42+a43+a5+a7+a6+a8+a9
             global content
             content=content0.translate({ord(i): '\n' for i in ","})
             cursor.close()
@@ -646,6 +850,24 @@ def Update():
             gct4=gct3.translate({ord(i): None for i in "("})
             ictx=gct4.translate({ord(i): None for i in ")"})
             ict5=ictx.translate({ord(i): None for i in '"'})
+
+            cursor=conn.execute("SELECT TRANSACTIONS FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            afct1=str(fetch).translate({ord(i): None for i in "'"})
+            afct2=afct1.translate({ord(i): None for i in "["})
+            afct3=afct2.translate({ord(i): None for i in "]"})
+            afct4=afct3.translate({ord(i): None for i in "("})
+            awwz=afct4.translate({ord(i): None for i in ")"})
+            ahct5=awwz.translate({ord(i): None for i in ","})
+
+            cursor=conn.execute("SELECT PAIDWHERE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            bgct1=str(fetch).translate({ord(i): None for i in "'"})
+            bgct2=bgct1.translate({ord(i): None for i in "["})
+            bgct3=bgct2.translate({ord(i): None for i in "]"})
+            bgct4=bgct3.translate({ord(i): None for i in "("})
+            bictx=bgct4.translate({ord(i): None for i in ")"})
+            bict5=bictx.translate({ord(i): None for i in '"'})
         #remove ,
             ct5=ct5.translate({ord(i): None for i in ','})
             xct5=ct5.translate({ord(i): None for i in ' '})
@@ -660,6 +882,8 @@ def Update():
             hct5=hct5.translate({ord(i): None for i in ','})
             ict5=ict5.translate({ord(i): None for i in ','})
             ct5=ct5.translate({ord(i): None for i in ','})
+            ahct5=ahct5.translate({ord(i): None for i in ','})
+            bict5=bict5.translate({ord(i): None for i in ','})
         cursor.close()
         conn.close()
 
@@ -680,9 +904,11 @@ def Update():
         #getting form data
         price1=price.get()
         service1=services
+        transactions1=transactions.get()
+        paidwhere1=paidwhere.get()
         #execute query
-        conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,DATE2,MEC,CONTACT,PRICE,SERVICE)
-        VALUES (?,?,?,?,?,?,?,?)''',(dct5,ect5.upper(),fct5,fct52,mfct5,gct5,price1,service1))
+        conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,DATE2,MEC,TRANSACTIONS,PAIDWHERE,CONTACT,PRICE,SERVICE)
+        VALUES (?,?,?,?,?,?,?,?,?,?)''',(dct5,ect5.upper(),fct5,fct52,mfct5,transactions1,paidwhere1,gct5,price1,service1))
         conn.commit()
         tkMessageBox.showinfo("Messagem","Salva com sucesso\ncom novo Número de Pedido")
         #refresh table data
