@@ -614,16 +614,38 @@ def report_screenForm():
                     with open(filename, 'a') as file_object:
                         file_object.write(result)
 
+                #ADD SUM.TXT TO JOURNAL.TXT:
+                filesumfin = open("sum.txt")
+                prices_data0 = filesumfin.read().replace("\n", " ")
+                filesumfin.close()
+
+                prices_data1=prices_data0.split('{')
+                yui=0
+                prices_data3=[]
+                while yui < len(prices_data1):
+                    if prices_data1[yui] != '':
+                        prices_data2=float(prices_data1[yui])
+                        prices_data3.append(prices_data2)
+                    yui=yui+1
+                prices_data4=sum(prices_data3)
+                prices_data=str(prices_data4)
+
+                print(prices_data)
+
+                # filename4='journal.txt'
+                # with open(filename4, 'a') as file_object4:
+                #     file_object4.write(prices_data)
+
                 #SEND DATA FROM TXT FILE TO PRINTER:
                 if result != '0':
                     os.startfile("journal.txt", "print")
 
-            self.name_label = tk.Label(self.root, text="Data Inicial:dd/mm/aaaa (contando a data)")
+            self.name_label = tk.Label(self.root, text="Data Inicial:dd/mm/aaaa (contando o dia)")
             self.entry1 = tk.Entry(self.root)
             self.name_label.grid(row=1, column=0, sticky=tk.W)
             self.entry1.grid(row=2, column=0)
             
-            self.name_label = tk.Label(self.root, text="Data Final:dd/mm/aaaa (não contando a data)")
+            self.name_label = tk.Label(self.root, text="Data Final:dd/mm/aaaa (não contando o dia)")
             self.entry2 = tk.Entry(self.root)
             self.name_label.grid(row=1, column=1, sticky=tk.W)
             self.entry2.grid(row=2, column=1)
