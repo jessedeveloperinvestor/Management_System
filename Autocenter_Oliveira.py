@@ -557,13 +557,13 @@ def report_screenForm():
                 #SET DATES QUERYING FORMAT     
                 edate = date(int(yearf), int(mf), int(df))   # end date
                 delta = edate - sdate       # as timedelta
+                Database()
                 for i in range(delta.days + 1):
                     day = sdate + timedelta(days=i)
                     interm=str(day)
                     sep=interm.split('-')
                     date_between=str(sep[2])+'/'+str(sep[1])+'/'+str(sep[0])
 
-                    Database()
                     cursor=conn.execute("SELECT PRICE, ID, DATE2, SERVICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
                     fetch = cursor.fetchall()
                     ct1=str(fetch).translate({ord(i): None for i in "'"})
@@ -584,11 +584,18 @@ def report_screenForm():
                     filename='journal.txt'
                     with open(filename, 'a') as file_object:
                         file_object.write(result)
+                cursor.close()
+                conn.close()
 
                 #ADD TOTAL SUM OF PRICES:
 
+                Database()
+                cursor.execute('''ALTER TABLE REGISTRATION ALTER COLUMN PRICE REAL(10)''')
+                cursor.execute("SELECT SUM(PRICE) FROM REGISTRATIO NWHERE DATE2 = ?", (date_between,))
+                fetch = cursor.fetchall()
 
-
+                cursor.close()
+                conn.close()
                 #SEND DATA FROM TXT FILE TO PRINTER:
                 if result != '0':
                     os.startfile("journal.txt", "print")
@@ -630,7 +637,8 @@ def report_screenForm():
      
             self.id = 0
             self.iid = 0
- 
+            cursor.close()
+            conn.close()
     app = Application(tk.Tk())
     app.root.mainloop()
 
@@ -753,8 +761,8 @@ def Print():
             content0=a1+a2+a3+a4+a42+a43+a5+a7+a6+a8+a9
             global content
             content=content0.translate({ord(i): '\n' for i in ","})
-            cursor.close()
-            conn.close()
+        cursor.close()
+        conn.close()
     #PRINT
     brand=str(company_brand.upper)
     global q
@@ -773,8 +781,8 @@ def Delete():
         tree.delete(curItem)
         cursor=conn.execute("DELETE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
         conn.commit()
-        cursor.close()
-        conn.close()
+    cursor.close()
+    conn.close()
 def Update():
     #TELL TO SELECT ROW
     if not tree.selection():
@@ -896,8 +904,8 @@ def Update():
             ct5=ct5.translate({ord(i): None for i in ','})
             ahct5=ahct5.translate({ord(i): None for i in ','})
             bict5=bict5.translate({ord(i): None for i in ','})
-        cursor.close()
-        conn.close()
+            cursor.close()
+            conn.close()
 
         #INSERT DATA IN ROW
         global s01
@@ -937,8 +945,8 @@ def Update():
             Database()
             cursor=conn.execute("DELETE FROM REGISTRATION WHERE ID = %d" % yct5)
             conn.commit()
-            cursor.close()
-            conn.close()
+        cursor.close()
+        conn.close()
 
 #function to search data
 def SearchRecord():
@@ -955,8 +963,8 @@ def SearchRecord():
         #loop for displaying all records into GUI
         for data in fetch:
             tree.insert('', 'end', values=(data))
-        cursor.close()
-        conn.close()
+    cursor.close()
+    conn.close()
 #function to search data
 def SearchRecord2():
     #open database
@@ -972,8 +980,8 @@ def SearchRecord2():
         #loop for displaying all records into GUI
         for data in fetch:
             tree.insert('', 'end', values=(data))
-        cursor.close()
-        conn.close()
+    cursor.close()
+    conn.close()
 #defining function to access data from SQLite database
 def DisplayData():
     #open database
