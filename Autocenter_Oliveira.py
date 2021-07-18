@@ -548,10 +548,13 @@ def report_screenForm():
                 df=df2.translate({ord(i): None for i in "'"})
                 from datetime import date, timedelta
                 sdate = date(int(yeari), int(mi), int(di))   # start date
-                filename=tempfile.mktemp(".txt")
+
                 q='RELATÓRIO DE FATURAMENTO AUTO CENTER OLIVEIRA\n'
-                open (filename, "w"). write(q)
-                print(q)
+                filename='journal.txt'
+                with open(filename, 'w') as file_object:
+                    file_object.write(q)
+                           
+                #SET DATES QUERYING FORMAT     
                 edate = date(int(yearf), int(mf), int(df))   # end date
                 delta = edate - sdate       # as timedelta
                 for i in range(delta.days + 1):
@@ -575,11 +578,51 @@ def report_screenForm():
                     listfin=[]
                     listfin.append(inte)
                     listfin2=str(listfin).translate({ord(i): None for i in '"'})
+                    global result
                     result=listfin2.translate({ord(i): None for i in "['']"})
                     if result != '':
-                        print(result)
-                        open (filename, "w"). write(result)
-                    os.startfile(filename, "print")
+                        filename='journal.txt'
+                        with open(filename, 'a') as file_object2:
+                            file_object2.write(result)
+
+                #ADD TOTAL SUM OF PRICES:
+
+                filename='journal.txt'
+                with open(filename, 'r') as file_object2:
+                    resulty=file_object2.read()
+                jk1=str(resulty.split(" "))
+                jk2=jk1.translate({ord(i): None for i in "["})
+                jk3=jk2.translate({ord(i): None for i in "]"})
+                jk4=jk3.translate({ord(i): None for i in "'"})
+                jk=jk4.translate({ord(i): None for i in "RELATÓRIO, DE, FATURAMENTO, AUTO, CENTER, OLIVEIRA\n"})
+                numb=0
+                op=0
+                lister=[]
+                while  op <= numb:
+                    itemy=jk[:numb]
+                    lister.append(itemy)
+                    numb=numb+5
+                    op=op+1
+                print(lister)
+
+                # list_of_floats = []
+                # for item in a_list:
+                #     list_of_floats.append(float(item))
+
+                # quant=0
+                # rs=0
+                # while rs <= len(math):
+                #     quant=quant+math[rs]
+                #     rs=rs+1
+                # quantity=str(quant)
+
+                # sum_prices='\nSOMA TOTAL DE PREÇOS: '+quantity
+                # filename='journal.txt'
+                # with open(filename, 'a') as file_object11:
+                #     file_object11.write(sum_prices)
+
+                #SEND DATA FROM TXT FILE TO PRINTER:
+                os.startfile("journal.txt", "print")
 
             self.name_label = tk.Label(self.root, text="Data Inicial:dd/mm/aaaa")
             self.entry1 = tk.Entry(self.root)
