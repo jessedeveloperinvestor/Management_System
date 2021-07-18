@@ -503,7 +503,7 @@ def report_screenForm():
             self.initialize_user_interface()
         def initialize_user_interface(self):
             # Configure the root object for the Application
-            self.root.geometry('500x350')
+            self.root.geometry('550x350')
             self.root.title("RELATÓRIO")
             self.root.grid_rowconfigure(0, weight=1)
             self.root.grid_columnconfigure(0, weight=1)
@@ -561,16 +561,19 @@ def report_screenForm():
                 #SET DATES QUERYING FORMAT     
                 edate = date(int(yearf), int(mf), int(df))   # end date
                 delta = edate - sdate       # as timedelta
+
+                #Reset sum.txt file
+                filenamex0='sum.txt'
+                with open(filenamex0, 'w') as file_objectsum0:
+                    file_objectsum0.write('')
+
                 for i in range(delta.days + 1):
                     day = sdate + timedelta(days=i)
                     interm=str(day)
                     sep=interm.split('-')
                     date_between=str(sep[2])+'/'+str(sep[1])+'/'+str(sep[0])
-                    filename='sum.txt'
-                    with open(filename, 'w') as file_objectsum:
-                        file_objectsum.write('[')
 
-                    #SUM OF PRICES
+                    #REGISTER PRICES
                     Database()
                     cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
                     fetch = cursor.fetchall()
@@ -583,8 +586,8 @@ def report_screenForm():
                     ct5s=ct0045.translate({ord(i): None for i in '"'})
                     ct5=ct5s.translate({ord(i): None for i in ","})
                     ct6=ct5.translate({ord(i): None for i in ","})
-                    filename='sum.txt'
-                    with open(filename, 'a') as file_objectsum:
+                    filenamex='sum.txt'
+                    with open(filenamex, 'a') as file_objectsum:
                         file_objectsum.write(ct6)
 
                     #GET DATA TO REPORT
