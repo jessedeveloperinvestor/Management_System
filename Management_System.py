@@ -628,13 +628,13 @@ def report_screenForm():
                         prices_data3.append(prices_data2)
                     yui=yui+1
                 prices_data4=sum(prices_data3)
-                prices_data=str(prices_data4)
+                prices_data5=str(prices_data4)
 
-                print(prices_data)
+                prices_data='TOTAL DE FATURAMENTO\nSOMANDO VENDAS DE PRODUTOS LANÇADOS NESTE SISTEMA: '+prices_data5
 
-                # filename4='journal.txt'
-                # with open(filename4, 'a') as file_object4:
-                #     file_object4.write(prices_data)
+                filename4='journal.txt'
+                with open(filename4, 'a') as file_object4:
+                    file_object4.write(prices_data)
 
                 #SEND DATA FROM TXT FILE TO PRINTER:
                 if result != '0':
