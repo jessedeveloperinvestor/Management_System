@@ -587,14 +587,18 @@ def report_screenForm():
                         file_object.write(result)
 
                     total_num=result.split('.0 ')
-                    print(str(total_num))
-
-                    # total_num2=sum(total_num1)
-                    # total_num3=str(total_num2)
-                    # print(total_num3)
+                    total_num1=str(total_num)
+                    filename='sum.txt'
+                    with open(filename, 'a') as file_objectz:
+                        file_objectz.write(total_num1)
 
                     cursor.close()
                     conn.close()
+
+                #READ sum.txt, QUERY PRICES AND SUM
+                filename='sum.txt'
+                with open(filename, 'r') as file_objecty:
+                    file_objecty.read()
 
                 #SEND DATA FROM TXT FILE TO PRINTER:
                 if result != '0':
