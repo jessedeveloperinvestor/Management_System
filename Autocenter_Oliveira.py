@@ -557,13 +557,13 @@ def report_screenForm():
                 #SET DATES QUERYING FORMAT     
                 edate = date(int(yearf), int(mf), int(df))   # end date
                 delta = edate - sdate       # as timedelta
-                Database()
                 for i in range(delta.days + 1):
                     day = sdate + timedelta(days=i)
                     interm=str(day)
                     sep=interm.split('-')
                     date_between=str(sep[2])+'/'+str(sep[1])+'/'+str(sep[0])
-
+                    
+                    Database()
                     cursor=conn.execute("SELECT PRICE, ID, DATE2, SERVICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
                     fetch = cursor.fetchall()
                     ct1=str(fetch).translate({ord(i): None for i in "'"})
@@ -585,7 +585,10 @@ def report_screenForm():
                     filename='journal.txt'
                     with open(filename, 'a') as file_object:
                         file_object.write(result)
+                    cursor.close()
+                    conn.close()
 
+                Database()
                 cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
                 fetch = cursor.fetchall()
                 # u_prices0=str(fetch).translate({ord(i): None for i in "["})
