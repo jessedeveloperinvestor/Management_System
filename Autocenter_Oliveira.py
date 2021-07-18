@@ -546,10 +546,10 @@ def report_screenForm():
                 df1=ff[0].translate({ord(i): None for i in '['})
                 df2=df1.translate({ord(i): None for i in ']'})
                 df=df2.translate({ord(i): None for i in "'"})
+
                 from datetime import date, timedelta
                 sdate = date(int(yeari), int(mi), int(di))   # start date
-
-                q='RELATÓRIO DE FATURAMENTO AUTO CENTER OLIVEIRA\nORDEM DE DADOS:\nPreço|Número de Pedido|Data de Saída|Tarefas ou Produtos'
+                q='RELATÓRIO DE FATURAMENTO AUTO CENTER OLIVEIRA\nORDEM DE DADOS:\nPreço|Número de Pedido|Data de Saída|Tarefas ou Produtos\n'
                 filename='journal.txt'
                 with open(filename, 'w') as file_object:
                     file_object.write(q)
@@ -572,7 +572,8 @@ def report_screenForm():
                     ct4=ct3.translate({ord(i): None for i in "("})
                     ct004=ct4.translate({ord(i): '{' for i in ")"})
                     ct0045=ct004.translate({ord(i): None for i in ","})
-                    ct5=ct0045.translate({ord(i): None for i in '"'})
+                    ct5s=ct0045.translate({ord(i): None for i in '"'})
+                    ct5=ct5s.translate({ord(i): None for i in ","})
                     report_data=ct5.split('{')
                     inte=str(report_data)
                     listfin=[]
@@ -584,18 +585,17 @@ def report_screenForm():
                     filename='journal.txt'
                     with open(filename, 'a') as file_object:
                         file_object.write(result)
-                cursor.close()
-                conn.close()
 
-                #ADD TOTAL SUM OF PRICES:
-
-                Database()
-                cursor.execute('''ALTER TABLE REGISTRATION ALTER COLUMN PRICE REAL(10)''')
-                cursor.execute("SELECT SUM(PRICE) FROM REGISTRATIO NWHERE DATE2 = ?", (date_between,))
+                cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
                 fetch = cursor.fetchall()
-
+                # u_prices0=str(fetch).translate({ord(i): None for i in "["})
+                # u_prices1=u_prices0.translate({ord(i): None for i in "]"})
+                # u_prices2=u_prices1.translate({ord(i): None for i in ","})
+                # u_prices=u_prices2.translate({ord(i): None for i in " "})
+                print(str(fetch))
                 cursor.close()
                 conn.close()
+
                 #SEND DATA FROM TXT FILE TO PRINTER:
                 if result != '0':
                     os.startfile("journal.txt", "print")
