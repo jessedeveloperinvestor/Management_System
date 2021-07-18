@@ -562,7 +562,7 @@ def report_screenForm():
                     interm=str(day)
                     sep=interm.split('-')
                     date_between=str(sep[2])+'/'+str(sep[1])+'/'+str(sep[0])
-                    
+
                     Database()
                     cursor=conn.execute("SELECT PRICE, ID, DATE2, SERVICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
                     fetch = cursor.fetchall()
@@ -585,19 +585,16 @@ def report_screenForm():
                     filename='journal.txt'
                     with open(filename, 'a') as file_object:
                         file_object.write(result)
+
+                    total_num=result.split('.0 ')
+                    print(str(total_num))
+
+                    # total_num2=sum(total_num1)
+                    # total_num3=str(total_num2)
+                    # print(total_num3)
+
                     cursor.close()
                     conn.close()
-
-                Database()
-                cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
-                fetch = cursor.fetchall()
-                # u_prices0=str(fetch).translate({ord(i): None for i in "["})
-                # u_prices1=u_prices0.translate({ord(i): None for i in "]"})
-                # u_prices2=u_prices1.translate({ord(i): None for i in ","})
-                # u_prices=u_prices2.translate({ord(i): None for i in " "})
-                print(str(fetch))
-                cursor.close()
-                conn.close()
 
                 #SEND DATA FROM TXT FILE TO PRINTER:
                 if result != '0':
