@@ -553,7 +553,11 @@ def report_screenForm():
                 filename='journal.txt'
                 with open(filename, 'w') as file_object:
                     file_object.write(q)
-                           
+
+                filenamen='sum.txt'
+                with open(filenamen, 'w') as file_objectz:
+                    file_objectz.write('[')
+
                 #SET DATES QUERYING FORMAT     
                 edate = date(int(yearf), int(mf), int(df))   # end date
                 delta = edate - sdate       # as timedelta
@@ -562,7 +566,28 @@ def report_screenForm():
                     interm=str(day)
                     sep=interm.split('-')
                     date_between=str(sep[2])+'/'+str(sep[1])+'/'+str(sep[0])
+                    filename='sum.txt'
+                    with open(filename, 'w') as file_objectsum:
+                        file_objectsum.write('[')
 
+                    #SUM OF PRICES
+                    Database()
+                    cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
+                    fetch = cursor.fetchall()
+                    ct1=str(fetch).translate({ord(i): None for i in "'"})
+                    ct2=ct1.translate({ord(i): None for i in "["})
+                    ct3=ct2.translate({ord(i): None for i in "]"})
+                    ct4=ct3.translate({ord(i): None for i in "("})
+                    ct004=ct4.translate({ord(i): '{' for i in ")"})
+                    ct0045=ct004.translate({ord(i): None for i in ","})
+                    ct5s=ct0045.translate({ord(i): None for i in '"'})
+                    ct5=ct5s.translate({ord(i): None for i in ","})
+                    ct6=ct5.translate({ord(i): None for i in ","})
+                    filename='sum.txt'
+                    with open(filename, 'a') as file_objectsum:
+                        file_objectsum.write(ct6)
+
+                    #GET DATA TO REPORT
                     Database()
                     cursor=conn.execute("SELECT PRICE, ID, DATE2, SERVICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
                     fetch = cursor.fetchall()
@@ -586,35 +611,21 @@ def report_screenForm():
                     with open(filename, 'a') as file_object:
                         file_object.write(result)
 
-                    total_num=result.split('.0 ')
-                    total_num1=str(total_num)
-                    filename='sum.txt'
-                    with open(filename, 'a') as file_objectz:
-                        file_objectz.write(total_num1)
-
-                    cursor.close()
-                    conn.close()
-
-                #READ sum.txt, QUERY PRICES AND SUM
-                filename='sum.txt'
-                with open(filename, 'r') as file_objecty:
-                    file_objecty.read()
-
                 #SEND DATA FROM TXT FILE TO PRINTER:
                 if result != '0':
                     os.startfile("journal.txt", "print")
 
-            self.name_label = tk.Label(self.root, text="Data Inicial:dd/mm/aaaa")
+            self.name_label = tk.Label(self.root, text="Data Inicial:dd/mm/aaaa (contando a data)")
             self.entry1 = tk.Entry(self.root)
             self.name_label.grid(row=1, column=0, sticky=tk.W)
             self.entry1.grid(row=2, column=0)
             
-            self.name_label = tk.Label(self.root, text="Data Final:dd/mm/aaaa")
+            self.name_label = tk.Label(self.root, text="Data Final:dd/mm/aaaa (não contando a data)")
             self.entry2 = tk.Entry(self.root)
             self.name_label.grid(row=1, column=1, sticky=tk.W)
             self.entry2.grid(row=2, column=1)
 
-            self.submit_button = tk.Button(self.root, text="Gerar Relatório", command=Print_Report)
+            self.submit_button = tk.Button(self.root, text="Imprimir Relatório", command=Print_Report)
             self.submit_button.grid(row=3, column=1, sticky=tk.W)
 
             #open database
