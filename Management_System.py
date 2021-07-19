@@ -1,4 +1,5 @@
 #import libraries
+#pip install pandas
 import os
 import tempfile
 import tkinter
@@ -549,7 +550,7 @@ def report_screenForm():
 
                 from datetime import date, timedelta
                 sdate = date(int(yeari), int(mi), int(di))   # start date
-                q='RELATÓRIO DE FATURAMENTO AUTO CENTER OLIVEIRA\nORDEM DE DADOS:\nPreço|Número de Pedido|Data de Saída|Tarefas ou Produtos\n'
+                q='RELATÓRIO DE FATURAMENTO AUTO CENTER OLIVEIRA\nORDEM DE DADOS:\nPreço|Data de Saída|Tarefas ou Produtos\n'
                 filename='journal.txt'
                 with open(filename, 'w') as file_object:
                     file_object.write(q)
@@ -592,7 +593,7 @@ def report_screenForm():
 
                     #GET DATA TO REPORT
                     Database()
-                    cursor=conn.execute("SELECT PRICE, ID, DATE2, SERVICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
+                    cursor=conn.execute("SELECT PRICE, DATE2, SERVICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
                     fetch = cursor.fetchall()
                     ct1=str(fetch).translate({ord(i): None for i in "'"})
                     ct2=ct1.translate({ord(i): None for i in "["})
@@ -609,7 +610,8 @@ def report_screenForm():
                     listfin2=str(listfin).translate({ord(i): None for i in '"'})
                     global result
                     result='0'
-                    result=listfin2.translate({ord(i): None for i in "['']"})
+                    result1=listfin2.translate({ord(i): None for i in "['']"})
+                    result=result1.translate({ord(i): '\n' for i in ","})
                     filename='journal.txt'
                     with open(filename, 'a') as file_object:
                         file_object.write(result)
