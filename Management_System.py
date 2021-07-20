@@ -590,7 +590,6 @@ def report_screenForm():
                     filenamex='sum.txt'
                     with open(filenamex, 'a') as file_objectsum:
                         file_objectsum.write(ct6)
-
                     #GET DATA TO REPORT
                     Database()
                     cursor=conn.execute("SELECT PRICE, DATE2, SERVICE FROM REGISTRATION WHERE DATE2 = ?", (date_between,))
@@ -632,7 +631,7 @@ def report_screenForm():
                 prices_data4=sum(prices_data3)
                 prices_data5=str(prices_data4)
 
-                prices_data='TOTAL DE FATURAMENTO\nSOMANDO VENDAS DE PRODUTOS LANÇADOS NESTE SISTEMA: '+prices_data5
+                prices_data='TOTAL DE FATURAMENTO NO PERÍODO SELECIONADO: '+prices_data5
 
                 filename4='journal.txt'
                 with open(filename4, 'a') as file_object4:
