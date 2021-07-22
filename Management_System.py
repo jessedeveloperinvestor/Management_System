@@ -26,7 +26,9 @@ def Database():
 
 #ALTER TABLE, THEN COMMENT THESE COMMANDS:
     try:
-        open('file.txt','w')
+        filep='sum.txt'
+        with open(filep, 'a') as file_objectp:
+            file_objectp.write('')
     except:
         cursor.execute('''ALTER TABLE REGISTRATION ADD COLUMN TRANSACTIONS TEXT''')
         cursor.execute('''ALTER TABLE REGISTRATION ADD COLUMN PAIDWHERE TEXT''')
@@ -929,7 +931,7 @@ def Update():
             bgct4=bgct3.translate({ord(i): None for i in "("})
             bictx=bgct4.translate({ord(i): None for i in ")"})
             bict5=bictx.translate({ord(i): None for i in '"'})
-        #remove ,
+        #remove ','
             ct5=ct5.translate({ord(i): None for i in ','})
             xct5=ct5.translate({ord(i): None for i in ' '})
             global yct5
@@ -961,15 +963,44 @@ def Update():
         s3=s2.translate({ord(i): None for i in "]"})
         s4=s3.translate({ord(i): None for i in ","})
         services=s4
+        def fillall():
+            tkMessageBox.showinfo("Preencha conforme anterior/a atualizar: Preço total a Atualizar                    ")
+            #refresh table data
+            DisplayData()
+        def fillall2():
+            tkMessageBox.showinfo("Preencha conforme anterior/a atualizar: Tipo Transação                    ")
+            #refresh table data
+            DisplayData()
+        def fillall3():
+            tkMessageBox.showinfo("Preencha conforme anterior/a atualizar: Pago Onde                    ")
+            #refresh table data
+            DisplayData()
+        def fillall4():
+            tkMessageBox.showinfo("Preencha conforme anterior/a atualizar: Data Saída                    ")
+            #refresh table data
+            DisplayData()
         Database()
-        #getting form data
-        price1=price.get()
-        service1=services
-        transactions1=transactions.get()
-        paidwhere1=paidwhere.get()
+    #getting form data
+        if price.get() != '':
+            price1=price.get()
+        else:
+            fillall()
+        if transactions.get() != '':
+            transactions1=transactions.get()
+        else:
+            fillall2()
+        if paidwhere.get() != '':
+            paidwhere1=paidwhere.get()
+        else:
+            fillall3()
+        if date2.get() != '':
+            date21=date2.get()
+        else:
+            fillall4()
+        service1=service.get()
         #execute query
         conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,DATE,DATE2,MEC,TRANSACTIONS,PAIDWHERE,CONTACT,PRICE,SERVICE)
-        VALUES (?,?,?,?,?,?,?,?,?,?)''',(dct5,ect5.upper(),fct5,fct52,mfct5,transactions1,paidwhere1,gct5,price1,service1))
+        VALUES (?,?,?,?,?,?,?,?,?,?)''',(dct5,ect5.upper(),fct5,date21,mfct5,transactions1,paidwhere1,gct5,price1,service1))
         conn.commit()
         tkMessageBox.showinfo("Messagem","Salva com sucesso\ncom novo Número de Pedido")
         #refresh table data
