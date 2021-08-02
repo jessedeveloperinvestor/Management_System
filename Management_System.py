@@ -43,7 +43,7 @@ def DisplayForm():
     #setting width and height for window
     display_screen.geometry("1350x715")
     #setting title for window
-    display_screen.title("Jesse Leite Softwares                                                      https://relaxed-dijkstra-f2b25b.netlify.app")
+    display_screen.title("Jesse Leite Softwares                                                      https://jessedeveloperinvestor.github.io/Jesse-Portfolio/")
     global tree
     global SEARCH
     global name,code,date,date2,mec,contact,price,service
