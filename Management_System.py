@@ -24,7 +24,7 @@ def Database():
     cursor = conn.cursor()
     #creating STUD_REGISTRATION table
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, DATE2 TEXT, MEC TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT, TRANSACTIONS TEXT, PAIDWHERE TEXT)")
+        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, DATE2 TEXT, MEC TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT)")
 
 #ALTER TABLE, THEN COMMENT THESE COMMANDS:
     try:
@@ -32,26 +32,9 @@ def Database():
         with open(filep, 'a') as file_objectp:
             file_objectp.write('')
     except:
+        cursor.execute('''ALTER TABLE REGISTRATION ADD COLUMN TRANSACTIONS TEXT''')
+        cursor.execute('''ALTER TABLE REGISTRATION ADD COLUMN PAIDWHERE TEXT''')
         file = open("sum.txt", "w") 
-        file.write("1") 
-        file.close()
-
-#building customer database
-def CustomersDatabase():
-    global conn, cursor
-    conn = sqlite3.connect("customer.db")
-    cursor = conn.cursor()
-    #creating STUD_REGISTRATION table
-    cursor.execute(
-        "CREATE TABLE IF NOT EXISTS CUSTOMERS (IDCUSTOMER INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, CONTACT TEXT)")
-
-#ALTER TABLE, THEN COMMENT THESE COMMANDS:
-    try:
-        filep='sum_customer.txt'
-        with open(filep, 'a') as file_objectp:
-            file_objectp.write('')
-    except:
-        file = open("sum_customer.txt", "w") 
         file.write("1") 
         file.close()
 
@@ -125,15 +108,11 @@ def DisplayForm():
     #creating search entry
     search = Entry(LeftViewForm, textvariable=SEARCH, font=('verdana', 15), width=10)
     search.pack(side=TOP, padx=10, fill=X)
-    #creating search customer button
-    btn_search = Button(LeftViewForm, text="CLIENTE\npor Placa", command=SearchCustomer)
-    btn_search.pack(side=TOP, padx=10, pady=10, fill=X)
-    #creating save customer button
-    btn_search = Button(LeftViewForm, text="Salvar\nCLIENTE", command=SaveCustomer)
-    btn_search.pack(side=TOP, padx=10, pady=10, fill=X)
-
     #creating search button
     btn_search = Button(LeftViewForm, text="Pesquisar\nPLACA", command=SearchRecord)
+    btn_search.pack(side=TOP, padx=10, pady=10, fill=X)
+    #creating search customer button
+    btn_search = Button(LeftViewForm, text="CLIENTE\nUsar Dados", command=SearchCustomer)
     btn_search.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating search button
     btn_search2 = Button(LeftViewForm, text="Pesquisar\nNÚMERO", command=SearchRecord2)
@@ -206,28 +185,13 @@ def DisplayForm():
         label1.place(x=275, y=0.45)
 
 def SearchCustomer():
-    #open database
-    CustomersDatabase()
-    #checking search text is empty or not
-    if SEARCH.get() != "":
-        #clearing current display data
-        tree.delete(*tree.get_children())
-        #select query with where clause
-        cursor=conn.execute("SELECT * FROM REGISTRATION WHERE CODE LIKE ?", ('%' + str(SEARCH.get().upper()) + '%',))
-        #fetch all matching records
-        fetch = cursor.fetchall()
-        #loop for displaying all records into GUI
-        print(fetch)
-        for data in fetch:
-            tree.insert('', 'end', values=(data))
-    print('search customer per code of car and load data into variables to register service')
-
-    #open database
-    CustomersDatabase()
-    if 1==1:
-        tkMessageBox.showwarning("Aviso","Ver dados do cliente com esta placa de carro?")
+    print('select service in query, get data from filtered service and load data into variables to register service')
+#open database
+    Database()
+    if not tree.selection():
+        tkMessageBox.showwarning("Aviso","Selecione uma linha com a placa e dados do cliente")
     else:
-        result = tkMessageBox.askquestion('Confirmar', 'Você quer visualizar este cliente?',
+        result = tkMessageBox.askquestion('Confirmar', 'Você quer usar estes dados de cliente?',
                                           icon="warning")
         if result == 'yes':
             curItem = tree.focus()
@@ -235,85 +199,42 @@ def SearchCustomer():
             selecteditem = contents['values']
             tree.delete(curItem)
 
-            cursor=conn.execute("SELECT IDCUSTOMER FROM REGISTRATION WHERE CODE = %d" % selecteditem[0])
+            cursor=conn.execute("SELECT NAME FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            ct1=str(fetch).translate({ord(i): None for i in "'"})
-            ct2=ct1.translate({ord(i): None for i in "["})
-            ct3=ct2.translate({ord(i): None for i in "]"})
-            ct4=ct3.translate({ord(i): None for i in "("})
-            ct004=ct4.translate({ord(i): None for i in ")"})
-            ct5=ct004.translate({ord(i): None for i in ","})
+            bct1=str(fetch).translate({ord(i): None for i in "'"})
+            bct2=bct1.translate({ord(i): None for i in "["})
+            bct3=bct2.translate({ord(i): None for i in "]"})
+            bct4=bct3.translate({ord(i): None for i in "("})
+            dct5=bct4.translate({ord(i): None for i in ")"})
 
-            cursor=conn.execute("SELECT NAME FROM REGISTRATION WHERE CODE = %d" % selecteditem[0])
+            cursor=conn.execute("SELECT CODE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            fct1=str(fetch).translate({ord(i): None for i in "'"})
-            fct2=fct1.translate({ord(i): None for i in "["})
-            fct3=fct2.translate({ord(i): None for i in "]"})
-            fct4=fct3.translate({ord(i): None for i in "("})
-            wwz=fct4.translate({ord(i): None for i in ")"})
-            hct5=wwz.translate({ord(i): None for i in ","})
+            cct1=str(fetch).translate({ord(i): None for i in "'"})
+            cct2=cct1.translate({ord(i): None for i in "["})
+            cct3=cct2.translate({ord(i): None for i in "]"})
+            cct4=cct3.translate({ord(i): None for i in "("})
+            ect5=cct4.translate({ord(i): None for i in ")"})
 
-            cursor=conn.execute("SELECT CODE FROM REGISTRATION WHERE CODE = %d" % selecteditem[0])
+            cursor=conn.execute("SELECT CONTACT FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
             fetch = cursor.fetchall()
-            gct1=str(fetch).translate({ord(i): None for i in "'"})
-            gct2=gct1.translate({ord(i): None for i in "["})
-            gct3=gct2.translate({ord(i): None for i in "]"})
-            gct4=gct3.translate({ord(i): None for i in "("})
-            ictx=gct4.translate({ord(i): None for i in ")"})
-            ict5=ictx.translate({ord(i): None for i in '"'})
+            ect1=str(fetch).translate({ord(i): None for i in "'"})
+            ect2=ect1.translate({ord(i): None for i in "["})
+            ect3=ect2.translate({ord(i): None for i in "]"})
+            ect4=ect3.translate({ord(i): None for i in "("})
+            gct5=ect4.translate({ord(i): None for i in ")"})
 
-            cursor=conn.execute("SELECT CONTACT FROM REGISTRATION WHERE CODE = %d" % selecteditem[0])
-            fetch = cursor.fetchall()
-            afct1=str(fetch).translate({ord(i): None for i in "'"})
-            afct2=afct1.translate({ord(i): None for i in "["})
-            afct3=afct2.translate({ord(i): None for i in "]"})
-            afct4=afct3.translate({ord(i): None for i in "("})
-            awwz=afct4.translate({ord(i): None for i in ")"})
-            ahct5=awwz.translate({ord(i): None for i in ","})
-
-            cursor.close()
-            conn.close()
-    
-            import tkinter as tk
-            import tkinter.ttk as ttk
-            class Application(tk.Frame):
-                def __init__(self, root):
-                    self.root = root
-                    self.initialize_user_interface()
-                def initialize_user_interface(self):
-                    # Configure the root object for the Application
-                    self.root.geometry('400x300')
-                    self.root.title("ORDEM DE PEDIDO")
-                    self.root.grid_rowconfigure(0, weight=1)
-                    self.root.grid_columnconfigure(0, weight=1)
-                    self.root.config(background="gray")
-             
-                    self.name_label = tk.Label(self.root, text="NOME DO CLIENTE "+hct5)
-                    self.name_label.grid(row=1, column=0, sticky=tk.W)
-
-                    self.name_label2 = tk.Label(self.root, text="NÚMERO DO CLIENTE "+ct5)
-                    self.name_label2.grid(row=0, column=0, sticky=tk.W)
-
-                    self.name_label = tk.Label(self.root, text="PLACA DO CARRO "+ahct5)
-                    self.name_label.grid(row=2, column=0, sticky=tk.W)
-
-                    self.name_label2 = tk.Label(self.root, text="FONE "+ bict5)
-                    self.name_label2.grid(row=3, column=0, sticky=tk.W)
-             
-                    self.idnumber_label = tk.Label(self.root, text="DADOS DO CLIENTE:")
-                    self.label_see_request = tk.Label(self.root, text="")
-                    self.idnumber_label.grid(row=4, column=0, sticky=tk.W)
-                    self.label_see_request.grid(row=4, column=1)
-             
-                    self.id = 0
-                    self.iid = 0
-
-            app = Application(tk.Tk())
-            app.root.mainloop()
-
-
-def SaveCustomer():
-    print('save customers data to customer database')
+            a2=dct5 #name
+            a3=ect5 #code
+            a5=gct5 #phone
+            global customerdata
+            content0 = a2 + a3 + a5
+            content1=content0.translate({ord(i): '>' for i in ","})
+            content=content1.translate({ord(i): '' for i in "'"})
+            customerdata = {}
+            customerdata = content.split(">")
+            print(customerdata)
+        cursor.close()
+        conn.close()
 
 global s01
 s01=['']
@@ -822,7 +743,7 @@ def report_screenForm():
     app.root.mainloop()
 
 def Print():
-        #open database
+    #open database
     Database()
     if not tree.selection():
         tkMessageBox.showwarning("Aviso","Selecione a linha a ser impressa")
