@@ -24,7 +24,7 @@ def Database():
     cursor = conn.cursor()
     #creating STUD_REGISTRATION table
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, DATE2 TEXT, MEC TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT)")
+        "CREATE TABLE IF NOT EXISTS REGISTRATION (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, DATE TEXT, DATE2 TEXT, MEC TEXT, CONTACT TEXT, PRICE TEXT, SERVICE TEXT, TRANSACTIONS TEXT, PAIDWHERE TEXT)")
 
 #ALTER TABLE, THEN COMMENT THESE COMMANDS:
     try:
@@ -32,9 +32,7 @@ def Database():
         with open(filep, 'a') as file_objectp:
             file_objectp.write('')
     except:
-        cursor.execute('''ALTER TABLE REGISTRATION ADD COLUMN TRANSACTIONS TEXT''')
-        cursor.execute('''ALTER TABLE REGISTRATION ADD COLUMN PAIDWHERE TEXT''')
-        file = open("file.txt", "w") 
+        file = open("sum.txt", "w") 
         file.write("1") 
         file.close()
 
@@ -45,7 +43,7 @@ def CustomersDatabase():
     cursor = conn.cursor()
     #creating STUD_REGISTRATION table
     cursor.execute(
-        "CREATE TABLE IF NOT EXISTS REGISTRATION (IDCUSTOMER INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, CONTACT TEXT)")
+        "CREATE TABLE IF NOT EXISTS CUSTOMERS (IDCUSTOMER INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, NAME TEXT, CODE TEXT, CONTACT TEXT)")
 
 #ALTER TABLE, THEN COMMENT THESE COMMANDS:
     try:
@@ -53,7 +51,7 @@ def CustomersDatabase():
         with open(filep, 'a') as file_objectp:
             file_objectp.write('')
     except:
-        file = open("file_customer.txt", "w") 
+        file = open("sum_customer.txt", "w") 
         file.write("1") 
         file.close()
 
@@ -222,8 +220,6 @@ def SearchCustomer():
         print(fetch)
         for data in fetch:
             tree.insert('', 'end', values=(data))
-    cursor.close()
-    conn.close()
     print('search customer per code of car and load data into variables to register service')
 
     #open database
@@ -318,134 +314,6 @@ def SearchCustomer():
 
 def SaveCustomer():
     print('save customers data to customer database')
-    #TELL TO SELECT ROW
-    if 1==1:
-        tkMessageBox.showwarning("Aviso","Preencha os campos: Nome, Placa e Fone")
-    else:
-        result = tkMessageBox.askquestion('Confirmar', 'Você quer salvar este cliente?\nO número de pedido será modificado',
-                                          icon="warning")
-        if result == 'yes':
-            #READ DATABASE
-            CustomersDatabase()
-            curItem = tree.focus()
-            contents = (tree.item(curItem))
-            selecteditem = contents['values']
-            tree.delete(curItem)
-
-            cursor=conn.execute("SELECT IDCUSTOMER FROM REGISTRATION WHERE CODE = %d" % selecteditem[0])
-            fetch = cursor.fetchall()
-            ct1=str(fetch).translate({ord(i): None for i in "'"})
-            ct2=ct1.translate({ord(i): None for i in "["})
-            ct3=ct2.translate({ord(i): None for i in "]"})
-            ct4=ct3.translate({ord(i): None for i in "("})
-            ct5=ct4.translate({ord(i): None for i in ")"})
-
-            cursor=conn.execute("SELECT NAME FROM REGISTRATION WHERE CODE = %d" % selecteditem[0])
-            fetch = cursor.fetchall()
-            bct1=str(fetch).translate({ord(i): None for i in "'"})
-            bct2=bct1.translate({ord(i): None for i in "["})
-            bct3=bct2.translate({ord(i): None for i in "]"})
-            bct4=bct3.translate({ord(i): None for i in "("})
-            dct5=bct4.translate({ord(i): None for i in ")"})
-
-            cursor=conn.execute("SELECT CODE FROM REGISTRATION WHERE CODE = %d" % selecteditem[0])
-            fetch = cursor.fetchall()
-            cct1=str(fetch).translate({ord(i): None for i in "'"})
-            cct2=cct1.translate({ord(i): None for i in "["})
-            cct3=cct2.translate({ord(i): None for i in "]"})
-            cct4=cct3.translate({ord(i): None for i in "("})
-            ect5=cct4.translate({ord(i): None for i in ")"})
-
-
-            cursor=conn.execute("SELECT CONTACT FROM REGISTRATION WHERE CODE = %d" % selecteditem[0])
-            fetch = cursor.fetchall()
-            ect1=str(fetch).translate({ord(i): None for i in "'"})
-            ect2=ect1.translate({ord(i): None for i in "["})
-            ect3=ect2.translate({ord(i): None for i in "]"})
-            ect4=ect3.translate({ord(i): None for i in "("})
-            gct5=ect4.translate({ord(i): None for i in ")"})
-
-        #remove ','
-            ct5=ct5.translate({ord(i): None for i in ','})
-            xct5=ct5.translate({ord(i): None for i in ' '})
-            global yct5
-            yct5=int(xct5)
-            dct5=dct5.translate({ord(i): None for i in ','})
-            ect5=ect5.translate({ord(i): None for i in ','})
-            fct5=fct5.translate({ord(i): None for i in ','})
-            fct52=fct52.translate({ord(i): None for i in ','})
-            mfct5=mfct5.translate({ord(i): None for i in ','})
-            gct5=gct5.translate({ord(i): None for i in ','})
-            hct5=hct5.translate({ord(i): None for i in ','})
-            ict5=ict5.translate({ord(i): None for i in ','})
-            ct5=ct5.translate({ord(i): None for i in ','})
-            ahct5=ahct5.translate({ord(i): None for i in ','})
-            bict5=bict5.translate({ord(i): None for i in ','})
-            cursor.close()
-            conn.close()
-
-        #INSERT DATA IN ROW
-        global s01
-        s01=['']
-        global s1
-        stxt=service.get()+'|'
-        s0=stxt.split()
-        s01.append(ict5)
-        s01.append(s0)
-        s1=str(s01)
-        s2=s1.translate({ord(i): None for i in "["})
-        s3=s2.translate({ord(i): None for i in "]"})
-        s4=s3.translate({ord(i): None for i in ","})
-        services=s4
-        def fillall():
-            tkMessageBox.showinfo("Preencha o campo Nome                                                            ")
-            #refresh table data
-            DisplayData()
-        def fillall2():
-            tkMessageBox.showinfo("Preencha o campo Placa                                                             ")
-            #refresh table data
-            DisplayData()
-        def fillall3():
-            tkMessageBox.showinfo("Preencha o campo Fone                                                            ")
-            #refresh table data
-            DisplayData()
-            DisplayData()
-        CustomersDatabase()
-    #getting form data
-        if name.get() != '':
-            name1=name.get()
-        else:
-            fillall()
-        if code.get() != '':
-            code1=code.get()
-        else:
-            fillall2()
-        if contact.get() != '':
-            contact1=contact.get()
-        else:
-            fillall3()
-        service1=service.get()
-        #execute query
-        conn.execute('''INSERT INTO REGISTRATION (NAME,CODE,CONTACT)
-        VALUES (?,?,?,?,?,?,?,?,?,?)''',(dct5,ect5.upper(),gct5))
-        conn.commit()
-        tkMessageBox.showinfo("Messagem","Cliente salvo com sucesso")
-        #refresh table data
-        DisplayData()
-
-        #DELETE OLD ROW
-        result = tkMessageBox.askquestion('Confirmar', 'Concluir atualização?',
-                                          icon="warning")
-        if result == 'yes':
-            curItem = tree.focus()
-            contents = (tree.item(curItem))
-            selecteditem = contents['values']
-            # tree.delete(curItem)
-            Database()
-            cursor=conn.execute("DELETE FROM REGISTRATION WHERE ID = %d" % yct5)
-            conn.commit()
-        cursor.close()
-        conn.close()
 
 global s01
 s01=['']
