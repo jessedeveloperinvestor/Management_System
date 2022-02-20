@@ -185,7 +185,6 @@ def DisplayForm():
         label1.place(x=275, y=0.45)
 
 def SearchCustomer():
-    print('select service in query, get data from filtered service and load data into variables to register service')
 #open database
     Database()
     if not tree.selection():
@@ -233,6 +232,10 @@ def SearchCustomer():
             customerdata = {}
             customerdata = content.split(">")
             print(customerdata)
+            global namecopied, codecopied, contactcopied
+            namecopied=str(customerdata[0])
+            codecopied=str(customerdata[1])
+            contactcopied=str(customerdata[2])
         cursor.close()
         conn.close()
 
@@ -404,11 +407,17 @@ def save_tasks():
         Database()
         #getting form data
         name1=name.get()
+        if name1=="":
+            name1=namecopied
         code1=code.get()
+        if code1=="":
+            code1=codecopied
         date1=date.get()
         date21=date2.get()
         mec1=mec.get()
         contact1=contact.get()
+        if contact1=="":
+            contact1=contactcopied
         price1=float(total_price_sum)
         service1=services
         transactions1=transactions.get()
