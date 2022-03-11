@@ -900,8 +900,8 @@ def Print():
             a7='Serviço(s): '+ict5
             a8='Tipo de Transação: '+ahct5
             a9='Pago Onde: '+bict5
-            content0=a1+a2+a3+a4+a42+a43+a5+a7+a6+a8+a9
             global content
+            content0=a1+a2+a3+a4+a42+a43+a5+a7+a6+a8+a9
             content=content0.translate({ord(i): '\n' for i in ","})
         cursor.close()
         conn.close()
@@ -1029,8 +1029,8 @@ def PrintDesign():
             a7='Serviço(s): '+ict5
             a8='Tipo de Transação: '+ahct5
             a9='Pago Onde: '+bict5
-            content0=a1+a2+a3+a4+a42+a43+a5+a7+a6+a8+a9
             global content
+            content0=a1+a2+a3+a4+a42+a43+a5+a7+a6+a8+a9
             content=content0.translate({ord(i): '\n' for i in ","})
         cursor.close()
         conn.close()
