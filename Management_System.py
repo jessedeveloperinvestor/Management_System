@@ -27,9 +27,6 @@ company_brand="Auto Center Oliveira"
 #SETTING UP PRINTING DESIGN
 #convert the font so it is compatible
 pdfmetrics.registerFont(TTFont('Arial','Arial.ttf'))
-#import the sheet from the excel file
-wb = openpyxl.load_workbook('C:\\Users\\macbook\\Desktop\\Management_System\\data.xlsx')
-sheet = wb.get_sheet_by_name('servicos')
 #import company's logo
 im = Image.open('AO.png')
 width, height = im.size
@@ -1032,50 +1029,9 @@ def PrintDesign():
             global content
             content0=a1+a2+a3+a4+a42+a43+a5+a7+a6+a8+a9
             content=content0.translate({ord(i): '\n' for i in ","})
-        cursor.close()
-        conn.close()
-    #PRINT
-    brand=str(company_brand.upper)
-    global q
-    q='------------------------------------------------------------------\n'+brand+'\n------------------------------------------------------------------\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'------------------------------------------------------------------'
-    # filename=tempfile.mktemp(".txt")
-    # open (filename, "w"). write(q)
-    # os.startfile(filename, "print")
-    for i in range(2,3):
-        #Reading values from excel file
-        Cliente = sheet.cell(row = i, column = 2).value
-        Numero_Orcamento = sheet.cell(row = i, column = 1).value
-        Data_Inicial = sheet.cell(row = i, column = 13).value
-        Data_Final = sheet.cell(row = i, column = 14).value
-        Servico_1 = sheet.cell(row = i, column = 3).value
-        Preco_1 = sheet.cell(row = i, column = 4).value
-        Servico_2 = sheet.cell(row = i, column = 5).value
-        Preco_2 = sheet.cell(row = i, column = 6).value
-        Servico_3 = sheet.cell(row = i, column = 7).value
-        Preco_3 = sheet.cell(row = i, column = 8).value
-        Servico_4 = sheet.cell(row = i, column = 9).value
-        Preco_4 = sheet.cell(row = i, column = 10).value
-        Servico_5 = sheet.cell(row = i, column = 11).value
-        Preco_5 = sheet.cell(row = i, column = 12).value
-
-        Preco_1N = int(Preco_1)
-        Preco_2N = int(Preco_2)
-        Preco_3N = int(Preco_3)
-        Preco_4N = int(Preco_4)
-        Preco_5N = int(Preco_5)
-        PrecoTotalSomadoList = []
-        PrecoTotalSomadoList.append(Preco_1)
-        PrecoTotalSomadoList.append(Preco_2)
-        PrecoTotalSomadoList.append(Preco_3)
-        PrecoTotalSomadoList.append(Preco_4)
-        PrecoTotalSomadoList.append(Preco_5)
-        sumprices = 0
-        for num in PrecoTotalSomadoList:
-            sumprices = sumprices +num
-        PrecoTotalSomado = sumprices
 
         #Creating a pdf file and setting a naming convention
-        c = canvas.Canvas(str(Numero_Orcamento) + '_' + str(Cliente) +'.pdf')
+        c = canvas.Canvas(str(ct5) + '_Servicos_' + str(dct5) +'.pdf')
         c.setPageSize((page_width, page_height))
 
         #Drawing the image
@@ -1094,70 +1050,51 @@ def PrintDesign():
         
         c.setFont('Arial', 45)
         c.drawString(x, y, 'Gerado por: ')
-        c.drawString(x2,y, company_name)
+        c.drawString(x2,y, 'Auto Center Oliveira')
         y -= margin
         
         c.drawString(x,y,'Cliente: ')
-        c.drawString(x2,y,str(Cliente))
+        c.drawString(x2,y,str(dct5))
         y -= margin
         
         c.drawString(x,y,'Numero do Orçamento: ')
-        c.drawString(x2,y, str(Numero_Orcamento))
+        c.drawString(x2,y, str(ct5))
         y -= margin
-        
-        Data_InicialF = str(Data_Inicial)[:-9]
-        Data_FinalF = str(Data_Final)[:-9]
 
         c.drawString(x,y, 'Data Inicial: ')
-        c.drawString(x2,y, str(Data_InicialF))
+        c.drawString(x2,y, str(fct5))
         y -= margin
         
         c.drawString(x,y,'Data Final: ')
-        c.drawString(x2,y, str(Data_FinalF))
+        c.drawString(x2,y, str(fct52))
         y -= margin *2
-
-        c.drawString(x,y,'Servico 1: ')
-        c.drawString(x2,y, str(Servico_1))
-        y-= margin
         
-        c.drawString(x,y, 'Preço do Serviço 1: ')
-        c.drawString(x2,y, 'R$ ' + str(Preco_1) + ',00')
+        c.drawString(x,y, 'Placa: ')
+        c.drawString(x2,y, str(ect5))
         y -= margin
 
-        c.drawString(x,y,'Servico 2: ')
-        c.drawString(x2,y, str(Servico_2))
+        c.drawString(x,y,'Mecânico: ')
+        c.drawString(x2,y, str(mfct5))
         y-= margin
         
-        c.drawString(x,y, 'Preço do Serviço 2: ')
-        c.drawString(x2,y, 'R$ ' + str(Preco_2) + ',00')
+        c.drawString(x,y, 'Fone: ')
+        c.drawString(x2,y, str(gct5))
         y -= margin
 
-        c.drawString(x,y,'Servico 3: ')
-        c.drawString(x2,y, str(Servico_3))
+        c.drawString(x,y,'Tipo de Transacão: ')
+        c.drawString(x2,y, str(ahct5))
         y-= margin
         
-        c.drawString(x,y, 'Preço do Serviço 3: ')
-        c.drawString(x2,y, 'R$ ' + str(Preco_3) + ',00')
+        c.drawString(x,y, 'Pago Onde: ')
+        c.drawString(x2,y, str(bict5))
         y -= margin
 
-        c.drawString(x,y,'Servico 4: ')
-        c.drawString(x2,y, str(Servico_4))
+        c.drawString(x,y,'Servico(s): ')
+        c.drawString(x2,y, str(ict5))
         y-= margin
-        
-        c.drawString(x,y, 'Preço do Serviço 4: ')
-        c.drawString(x2,y, 'R$ ' + str(Preco_4) + ',00')
-        y -= margin
-
-        c.drawString(x,y,'Servico 5: ')
-        c.drawString(x2,y, str(Servico_5))
-        y-= margin
-        
-        c.drawString(x,y, 'Preço do Serviço 5: ')
-        c.drawString(x2,y, 'R$ ' + str(Preco_5) + ',00')
-        y -= margin
 
         c.drawString(x,y,'Preço Total: ')
-        c.drawString(x2,y,'R$ ' + str(PrecoTotalSomado) + ',00')
+        c.drawString(x2,y,'R$ ' + str(hct5) + '0')
         y -= margin*3
                
         c.drawString(x,y,'Obrigado pela escolha!')
@@ -1168,6 +1105,8 @@ def PrintDesign():
 
         #Saving the pdf file
         c.save()
+        cursor.close()
+        conn.close()
 
 def Delete():
     #open database
