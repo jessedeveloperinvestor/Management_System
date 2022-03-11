@@ -2,6 +2,8 @@
 #pip install pandas
 #pip install pillow
 #pip install tkinter
+#pip install openpyxl
+#pip install reportlab
 import os
 import tempfile
 import tkinter
@@ -12,9 +14,37 @@ import sqlite3
 from PIL import Image, ImageTk
 import time
 from datetime import timedelta, date
+import openpyxl
+#libraries to create the pdf file and add text to it
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.pdfmetrics import stringWidth
+from reportlab.pdfbase.ttfonts import TTFont
 
 global company_brand
 company_brand="Auto Center Oliveira"
+
+#SETTING UP PRINTING DESIGN
+#convert the font so it is compatible
+pdfmetrics.registerFont(TTFont('Arial','Arial.ttf'))
+#import the sheet from the excel file
+wb = openpyxl.load_workbook('C:\\Users\\macbook\\Desktop\\Management_System\\data.xlsx')
+sheet = wb.get_sheet_by_name('servicos')
+#import company's logo
+im = Image.open('AO.png')
+width, height = im.size
+ratio = width/height
+image_width = 400
+image_height = int(image_width / ratio)
+#Page information
+page_width = 2156
+page_height = 3050
+#Invoice variables
+company_name ='Auto Center Oliveira'
+payment_terms = 'x'
+contact_info = 'x'
+margin = 100
+month_year = 'February 2022'
 
 #function to define database
 def Database():
@@ -122,6 +152,9 @@ def DisplayForm():
     btn_view.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating printing button
     btn_print = Button(LeftViewForm, text="Imprimir", command=Print)
+    btn_print.pack(side=TOP, padx=10, pady=10, fill=X)
+    #creating printing button
+    btn_print = Button(LeftViewForm, text="Imprimir Design", command=PrintDesign)
     btn_print.pack(side=TOP, padx=10, pady=10, fill=X)
     #creating delete button
     btn_delete = Button(LeftViewForm, text="Apagar", command=Delete)
@@ -879,6 +912,263 @@ def Print():
     filename=tempfile.mktemp(".txt")
     open (filename, "w"). write(q)
     os.startfile(filename, "print")
+
+def PrintDesign():
+    #open database
+    Database()
+    if not tree.selection():
+        tkMessageBox.showwarning("Aviso","Selecione a linha a ser impressa")
+    else:
+        result = tkMessageBox.askquestion('Confirmar', 'Você quer imprimir este pedido?',
+                                          icon="warning")
+        if result == 'yes':
+            curItem = tree.focus()
+            contents = (tree.item(curItem))
+            selecteditem = contents['values']
+            tree.delete(curItem)
+
+            cursor=conn.execute("SELECT ID FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            ct1=str(fetch).translate({ord(i): None for i in "'"})
+            ct2=ct1.translate({ord(i): None for i in "["})
+            ct3=ct2.translate({ord(i): None for i in "]"})
+            ct4=ct3.translate({ord(i): None for i in "("})
+            ct5=ct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT NAME FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            bct1=str(fetch).translate({ord(i): None for i in "'"})
+            bct2=bct1.translate({ord(i): None for i in "["})
+            bct3=bct2.translate({ord(i): None for i in "]"})
+            bct4=bct3.translate({ord(i): None for i in "("})
+            dct5=bct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT CODE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            cct1=str(fetch).translate({ord(i): None for i in "'"})
+            cct2=cct1.translate({ord(i): None for i in "["})
+            cct3=cct2.translate({ord(i): None for i in "]"})
+            cct4=cct3.translate({ord(i): None for i in "("})
+            ect5=cct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT DATE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            dct1=str(fetch).translate({ord(i): None for i in "'"})
+            dct2=dct1.translate({ord(i): None for i in "["})
+            dct3=dct2.translate({ord(i): None for i in "]"})
+            dct4=dct3.translate({ord(i): None for i in "("})
+            fct5=dct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT DATE2 FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            dct12=str(fetch).translate({ord(i): None for i in "'"})
+            dct22=dct12.translate({ord(i): None for i in "["})
+            dct32=dct22.translate({ord(i): None for i in "]"})
+            dct42=dct32.translate({ord(i): None for i in "("})
+            fct52=dct42.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT MEC FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            mdct1=str(fetch).translate({ord(i): None for i in "'"})
+            mdct2=mdct1.translate({ord(i): None for i in "["})
+            mdct3=mdct2.translate({ord(i): None for i in "]"})
+            mdct4=mdct3.translate({ord(i): None for i in "("})
+            mfct5=mdct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT CONTACT FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            ect1=str(fetch).translate({ord(i): None for i in "'"})
+            ect2=ect1.translate({ord(i): None for i in "["})
+            ect3=ect2.translate({ord(i): None for i in "]"})
+            ect4=ect3.translate({ord(i): None for i in "("})
+            gct5=ect4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT PRICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            fct1=str(fetch).translate({ord(i): None for i in "'"})
+            fct2=fct1.translate({ord(i): None for i in "["})
+            fct3=fct2.translate({ord(i): None for i in "]"})
+            fct4=fct3.translate({ord(i): None for i in "("})
+            hct5=fct4.translate({ord(i): None for i in ")"})
+
+            cursor=conn.execute("SELECT SERVICE FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            gct1=str(fetch).translate({ord(i): None for i in "'"})
+            gct2=gct1.translate({ord(i): None for i in "["})
+            gct3=gct2.translate({ord(i): None for i in "]"})
+            gct4=gct3.translate({ord(i): None for i in "("})
+            ictx=gct4.translate({ord(i): None for i in ")"})
+            ict5=ictx.translate({ord(i): None for i in '"'})
+
+            cursor=conn.execute("SELECT TRANSACTIONS FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            afct1=str(fetch).translate({ord(i): None for i in "'"})
+            afct2=afct1.translate({ord(i): None for i in "["})
+            afct3=afct2.translate({ord(i): None for i in "]"})
+            afct4=afct3.translate({ord(i): None for i in "("})
+            awwz=afct4.translate({ord(i): None for i in ")"})
+            ahct5=awwz.translate({ord(i): None for i in ","})
+
+            cursor=conn.execute("SELECT PAIDWHERE    FROM REGISTRATION WHERE ID = %d" % selecteditem[0])
+            fetch = cursor.fetchall()
+            bgct1=str(fetch).translate({ord(i): None for i in "'"})
+            bgct2=bgct1.translate({ord(i): None for i in "["})
+            bgct3=bgct2.translate({ord(i): None for i in "]"})
+            bgct4=bgct3.translate({ord(i): None for i in "("})
+            bictx=bgct4.translate({ord(i): None for i in ")"})
+            bict5=bictx.translate({ord(i): None for i in '"'})
+
+            a1='Número de ordem: '+ct5
+            a2='Nome: '+dct5
+            a3='Placa: '+ect5
+            a4='Data de Entrada: '+fct5
+            a42='Data de Saída: '+fct52
+            a43='Mecânico: '+mfct5
+            a5='Fone: '+gct5
+            a6='Preço Total(R$): '+hct5
+            a7='Serviço(s): '+ict5
+            a8='Tipo de Transação: '+ahct5
+            a9='Pago Onde: '+bict5
+            content0=a1+a2+a3+a4+a42+a43+a5+a7+a6+a8+a9
+            global content
+            content=content0.translate({ord(i): '\n' for i in ","})
+        cursor.close()
+        conn.close()
+    #PRINT
+    brand=str(company_brand.upper)
+    global q
+    q='------------------------------------------------------------------\n'+brand+'\n------------------------------------------------------------------\nOrdem de Serviço\n------------------------------------------------------------------\n'+content+'------------------------------------------------------------------'
+    # filename=tempfile.mktemp(".txt")
+    # open (filename, "w"). write(q)
+    # os.startfile(filename, "print")
+    for i in range(2,3):
+        #Reading values from excel file
+        Cliente = sheet.cell(row = i, column = 2).value
+        Numero_Orcamento = sheet.cell(row = i, column = 1).value
+        Data_Inicial = sheet.cell(row = i, column = 13).value
+        Data_Final = sheet.cell(row = i, column = 14).value
+        Servico_1 = sheet.cell(row = i, column = 3).value
+        Preco_1 = sheet.cell(row = i, column = 4).value
+        Servico_2 = sheet.cell(row = i, column = 5).value
+        Preco_2 = sheet.cell(row = i, column = 6).value
+        Servico_3 = sheet.cell(row = i, column = 7).value
+        Preco_3 = sheet.cell(row = i, column = 8).value
+        Servico_4 = sheet.cell(row = i, column = 9).value
+        Preco_4 = sheet.cell(row = i, column = 10).value
+        Servico_5 = sheet.cell(row = i, column = 11).value
+        Preco_5 = sheet.cell(row = i, column = 12).value
+
+        Preco_1N = int(Preco_1)
+        Preco_2N = int(Preco_2)
+        Preco_3N = int(Preco_3)
+        Preco_4N = int(Preco_4)
+        Preco_5N = int(Preco_5)
+        PrecoTotalSomadoList = []
+        PrecoTotalSomadoList.append(Preco_1)
+        PrecoTotalSomadoList.append(Preco_2)
+        PrecoTotalSomadoList.append(Preco_3)
+        PrecoTotalSomadoList.append(Preco_4)
+        PrecoTotalSomadoList.append(Preco_5)
+        sumprices = 0
+        for num in PrecoTotalSomadoList:
+            sumprices = sumprices +num
+        PrecoTotalSomado = sumprices
+
+        #Creating a pdf file and setting a naming convention
+        c = canvas.Canvas(str(Numero_Orcamento) + '_' + str(Cliente) +'.pdf')
+        c.setPageSize((page_width, page_height))
+
+        #Drawing the image
+        c.drawInlineImage("C:\\Users\\macbook\\Desktop\\Management_System\\Orcamentos_E_Servicos\\AO.png", page_width - image_width - margin,
+                          page_height - image_height - margin,
+                          image_width, image_height)
+
+        #Invoice information
+        c.setFont('Arial',80)
+        text = 'NOTA DE SERVIÇOS'
+        text_width = stringWidth(text,'Arial',80)
+        c.drawString((page_width-text_width)/2, page_height - image_height - margin, text)
+        y = page_height - image_height - margin*4
+        x = 2*margin
+        x2 = x + 550
+        
+        c.setFont('Arial', 45)
+        c.drawString(x, y, 'Gerado por: ')
+        c.drawString(x2,y, company_name)
+        y -= margin
+        
+        c.drawString(x,y,'Cliente: ')
+        c.drawString(x2,y,str(Cliente))
+        y -= margin
+        
+        c.drawString(x,y,'Numero do Orçamento: ')
+        c.drawString(x2,y, str(Numero_Orcamento))
+        y -= margin
+        
+        Data_InicialF = str(Data_Inicial)[:-9]
+        Data_FinalF = str(Data_Final)[:-9]
+
+        c.drawString(x,y, 'Data Inicial: ')
+        c.drawString(x2,y, str(Data_InicialF))
+        y -= margin
+        
+        c.drawString(x,y,'Data Final: ')
+        c.drawString(x2,y, str(Data_FinalF))
+        y -= margin *2
+
+        c.drawString(x,y,'Servico 1: ')
+        c.drawString(x2,y, str(Servico_1))
+        y-= margin
+        
+        c.drawString(x,y, 'Preço do Serviço 1: ')
+        c.drawString(x2,y, 'R$ ' + str(Preco_1) + ',00')
+        y -= margin
+
+        c.drawString(x,y,'Servico 2: ')
+        c.drawString(x2,y, str(Servico_2))
+        y-= margin
+        
+        c.drawString(x,y, 'Preço do Serviço 2: ')
+        c.drawString(x2,y, 'R$ ' + str(Preco_2) + ',00')
+        y -= margin
+
+        c.drawString(x,y,'Servico 3: ')
+        c.drawString(x2,y, str(Servico_3))
+        y-= margin
+        
+        c.drawString(x,y, 'Preço do Serviço 3: ')
+        c.drawString(x2,y, 'R$ ' + str(Preco_3) + ',00')
+        y -= margin
+
+        c.drawString(x,y,'Servico 4: ')
+        c.drawString(x2,y, str(Servico_4))
+        y-= margin
+        
+        c.drawString(x,y, 'Preço do Serviço 4: ')
+        c.drawString(x2,y, 'R$ ' + str(Preco_4) + ',00')
+        y -= margin
+
+        c.drawString(x,y,'Servico 5: ')
+        c.drawString(x2,y, str(Servico_5))
+        y-= margin
+        
+        c.drawString(x,y, 'Preço do Serviço 5: ')
+        c.drawString(x2,y, 'R$ ' + str(Preco_5) + ',00')
+        y -= margin
+
+        c.drawString(x,y,'Preço Total: ')
+        c.drawString(x2,y,'R$ ' + str(PrecoTotalSomado) + ',00')
+        y -= margin*3
+               
+        c.drawString(x,y,'Obrigado pela escolha!')
+        y -= margin
+        c.drawString(x,y,'Fone: (11) 1234-5678')
+        y -= margin
+        c.drawString(x,y,'Sistemas empresariais e comerciais: https://jesse-leite-softwares.onrender.com')    
+
+        #Saving the pdf file
+        c.save()
+
 def Delete():
     #open database
     Database()
@@ -892,6 +1182,7 @@ def Delete():
         conn.commit()
     cursor.close()
     conn.close()
+
 def Update():
     #TELL TO SELECT ROW
     if not tree.selection():

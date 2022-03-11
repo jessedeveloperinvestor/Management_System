@@ -12,7 +12,7 @@ from PIL import Image
 pdfmetrics.registerFont(TTFont('Arial','Arial.ttf'))
 
 #import the sheet from the excel file
-wb = openpyxl.load_workbook('C:\\Users\\macbook\\Desktop\\ManagementSystem\\Orcamentos_E_Servicos\\data.xlsx')
+wb = openpyxl.load_workbook('C:\\Users\\macbook\\Desktop\\Management_System\\Orcamentos_E_Servicos\\data.xlsx')
 sheet = wb.get_sheet_by_name('orcamentos')
 
 #import company's logo
@@ -73,7 +73,7 @@ def create_invoice():
         c.setPageSize((page_width, page_height))
 
         #Drawing the image
-        c.drawInlineImage("C:\\Users\\macbook\\Desktop\\ManagementSystem\\Orcamentos_E_Servicos\\AO.png", page_width - image_width - margin,
+        c.drawInlineImage("C:\\Users\\macbook\\Desktop\\Management_System\\Orcamentos_E_Servicos\\AO.png", page_width - image_width - margin,
                           page_height - image_height - margin,
                           image_width, image_height)
 
