@@ -1030,8 +1030,14 @@ def PrintDesign():
             content0=a1+a2+a3+a4+a42+a43+a5+a7+a6+a8+a9
             content=content0.translate({ord(i): '\n' for i in ","})
 
+        numbserv = ct5.split(',')
+        numberservice = numbserv[0]
+
+        ctm = dct5.split(',')
+        customerserv = ctm[0]
+
         #Creating a pdf file and setting a naming convention
-        c = canvas.Canvas(str(ct5) + '_Servicos_' + str(dct5) +'.pdf')
+        c = canvas.Canvas(str(numberservice) + '_Servicos_' + str(customerserv) +'.pdf')
         c.setPageSize((page_width, page_height))
 
         #Drawing the image
@@ -1054,44 +1060,74 @@ def PrintDesign():
         y -= margin
         
         c.drawString(x,y,'Cliente: ')
-        c.drawString(x2,y,str(dct5))
+        c.drawString(x2,y,str(customerserv))
         y -= margin
         
         c.drawString(x,y,'Numero do Orçamento: ')
-        c.drawString(x2,y, str(ct5))
+        c.drawString(x2,y, str(numberservice))
         y -= margin
+
+        initdt = fct5.split(',')
+        initialdate = initdt[0]
 
         c.drawString(x,y, 'Data Inicial: ')
-        c.drawString(x2,y, str(fct5))
+        c.drawString(x2,y, str(initialdate))
         y -= margin
+
+        findt = fct52.split(',')
+        finaldate = findt[0]
         
         c.drawString(x,y,'Data Final: ')
-        c.drawString(x2,y, str(fct52))
-        y -= margin *2
+        c.drawString(x2,y, str(finaldate))
+        y -= margin
+
+        pl = ect5.split(',')
+        codeplac = pl[0]
         
         c.drawString(x,y, 'Placa: ')
-        c.drawString(x2,y, str(ect5))
+        c.drawString(x2,y, str(codeplac))
         y -= margin
+
+        mec = mfct5.split(',')
+        mechanic = mec[0]
 
         c.drawString(x,y,'Mecânico: ')
-        c.drawString(x2,y, str(mfct5))
+        c.drawString(x2,y, str(mechanic))
         y-= margin
         
+        phn = gct5.split(',')
+        phone = phn[0]
+
         c.drawString(x,y, 'Fone: ')
-        c.drawString(x2,y, str(gct5))
+        c.drawString(x2,y, str(phone))
         y -= margin
+
+        trs = ahct5.split(',')
+        transaction = trs[0]
 
         c.drawString(x,y,'Tipo de Transacão: ')
-        c.drawString(x2,y, str(ahct5))
+        c.drawString(x2,y, str(transaction))
         y-= margin
         
+        pdw = bict5.split(',')
+        paidwhere = pdw[0]
+
         c.drawString(x,y, 'Pago Onde: ')
-        c.drawString(x2,y, str(bict5))
+        c.drawString(x2,y, str(paidwhere))
         y -= margin
 
+        srvs = ict5.split(',')
+        services = ""
+        for sv in srvs:
+            services= services + sv
+        treatserv = str(services)
+        treatserv2 = treatserv.split('|')
+
         c.drawString(x,y,'Servico(s): ')
-        c.drawString(x2,y, str(ict5))
-        y-= margin
+
+        for tsv in treatserv2:
+            c.drawString(x2,y, str(tsv))
+            y-= margin
 
         totpric = hct5.split(',')
         totalprice = totpric[0]
