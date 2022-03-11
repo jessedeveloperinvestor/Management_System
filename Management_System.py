@@ -1093,8 +1093,10 @@ def PrintDesign():
         c.drawString(x2,y, str(ict5))
         y-= margin
 
+        totpric = hct5.split(',')
+        totalprice = totpric[0]
         c.drawString(x,y,'Preço Total: ')
-        c.drawString(x2,y,'R$ ' + str(hct5) + '0')
+        c.drawString(x2,y,'R$ ' + str(totalprice) + '0')
         y -= margin*3
                
         c.drawString(x,y,'Obrigado pela escolha!')
